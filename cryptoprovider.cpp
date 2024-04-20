@@ -1,5 +1,6 @@
 
 #include "cryptoprovider.h"
+#include "RippaSSL/error.h"
 #include <openssl/evp.h>
 #include <openssl/params.h>
 #include <cstdint>
@@ -119,7 +120,7 @@ RippaSSL::Cipher::Cipher(Algo        algo,
 {
     if ((NULL == key) || (NULL == (context = EVP_CIPHER_CTX_new())))
     {
-        //TODO: throw!
+        throw InputError_NULLPTR {};
     }
 
     if (mode == RippaSSL::BcmMode::Bcm_CBC_Encrypt ||
@@ -135,10 +136,6 @@ RippaSSL::Cipher::Cipher(Algo        algo,
         FunctionPointers.cryptoInit   = EVP_DecryptInit;
         FunctionPointers.cryptoUpdate = EVP_DecryptUpdate;
         FunctionPointers.cryptoFinal  = EVP_DecryptFinal;
-    }
-    else
-    {
-        //TODO: throw an error!
     }
 
     if (mode == RippaSSL::BcmMode::Bcm_CBC_Encrypt ||
@@ -167,7 +164,7 @@ RippaSSL::Cipher::Cipher(Algo        algo,
 
     if (!FunctionPointers.cryptoInit(context, handle, key, iv))
     {
-        //TODO: throw error!
+        throw OpenSSLError_CryptoInit {};
     }
 
     // sets the padding, as per constructor:
@@ -179,7 +176,7 @@ int RippaSSL::Cipher::update(uint8_t* output, int& outLen,
 {
     if(!FunctionPointers.cryptoUpdate(context, output, &outLen, input, inLen))
     {
-        //TODO: throw error!
+        throw OpenSSLError_CryptoUpdate {};
     }
 
     return 0;
@@ -196,13 +193,13 @@ int RippaSSL::Cipher::finalize(uint8_t* output, int& outLen,
         try {
             update(output, updateLen, input, inLen);
         } catch (...) {
-            //TODO: handle the exception!
+            throw OpenSSLError_CryptoUpdate {};
         }
     }
 
     if (!FunctionPointers.cryptoFinal(context, output, &finalizeLen))
     {
-        //TODO: throw error!
+        throw OpenSSLError_CryptoFinalize {};
     }
 
     outLen = updateLen + finalizeLen;

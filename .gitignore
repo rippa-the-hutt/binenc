@@ -1,6 +1,7 @@
 # vim files:
 *.swp
 *.vim
+tags
 
 # output files:
 *.o

@@ -11,7 +11,6 @@ typedef EVP_CIPHER      CipherHandle;
 //static void (*CTX_Free) (EVP_CIPHER_CTX* ctx) = EVP_CIPHER_CTX_free;
 
 namespace RippaSSL {
-
     enum class BcmMode
     {
         Bcm_CBC_Encrypt,
@@ -94,14 +93,6 @@ namespace RippaSSL {
                       const unsigned char* iv,  size_t  ivLen,
                       const unsigned char* msg, size_t  msgLen,
                       unsigned char*       out, size_t* outLen);
-
-    int performSymCrytoOp(Algo       algo,
-                          BcmMode    mode,
-                          uint8_t*   key,
-                          uint8_t*   iv,
-                          uint8_t*   inData,
-                          uint8_t*   outData,
-                              int*   len);
 }
 
 #endif
