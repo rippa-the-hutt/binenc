@@ -192,8 +192,8 @@ int RippaSSL::Cipher::finalize(uint8_t* output, int& outLen,
     {
         try {
             update(output, updateLen, input, inLen);
-        } catch (...) {
-            throw OpenSSLError_CryptoUpdate {};
+        } catch (OpenSSLError_CryptoUpdate) {
+            throw OpenSSLError_CryptoFinalize {};
         }
     }
 

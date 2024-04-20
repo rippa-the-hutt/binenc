@@ -1,5 +1,6 @@
 #include "binIO.h"
 #include "cryptoprovider.h"
+#include "RippaSSL/error.h"
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
@@ -94,8 +95,31 @@ int main(int argc, char* argv[])
     int msgLen = BIO_readHexBinary(argv[msgIdx], buf);
 
     // creates the relevant object:
-    RippaSSL::Cipher myCbc {algo, bcm, key, iv_ptr};
-    myCbc.finalize(buf, msgLen, buf, msgLen);
+    try {
+        RippaSSL::Cipher myCbc {algo, bcm, key, iv_ptr};
+        myCbc.finalize(buf, msgLen, buf, msgLen);
+    }
+    catch (RippaSSL::InputError_NULLPTR) {
+        printf("Error! The key pointer is invalid, or something nasty happened"
+        " while calling OpenSSL's EVP_CIPHER_CTX_new()!\n");
+
+        return 1;
+    }
+    catch (RippaSSL::OpenSSLError_CryptoInit) {
+        printf("Error! OpenSSL failed to call its Init method!\n");
+
+        return 1;
+    }
+    catch (RippaSSL::OpenSSLError_CryptoUpdate) {
+        printf("Error! OpenSSL failed to call its Update method!\n");
+
+        return 1;
+    }
+    catch (RippaSSL::OpenSSLError_CryptoFinalize) {
+        printf("Error: OpenSSL failed to call its Finalize method!\n");
+
+        return 1;
+    }
 
     // prints the result:
     printf("Result: ");
