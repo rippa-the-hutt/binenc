@@ -50,10 +50,10 @@ namespace RippaSSL {
             SymCryptoBase(bool padding);
             virtual ~SymCryptoBase() = 0;
 
-            virtual int update(uint8_t* output, int& outLen,
-                               uint8_t* input,  int  inLen) = 0;
-            virtual int finalize(uint8_t* output, int& outputLen,
-                                 uint8_t* input,  int  inLen) = 0;
+            virtual int update(uint8_t* output,       int& outLen,
+                               const uint8_t* input,  int  inLen) = 0;
+            virtual int finalize(uint8_t* output,       int& outputLen,
+                                 const uint8_t* input,  int  inLen) = 0;
 
         protected:
             CTX* context;
@@ -63,16 +63,16 @@ namespace RippaSSL {
 
     class Cipher : public SymCryptoBase<CipherCtx, CipherHandle> {
         public:
-            Cipher(Algo        algo,
-                   BcmMode     mode,
-                   uint8_t*    key,
-                   uint8_t*    iv,
-                   bool        padding = false);
+            Cipher(Algo              algo,
+                   BcmMode           mode,
+                   const uint8_t*    key,
+                   const uint8_t*    iv,
+                   bool              padding = false);
 
-            int update(uint8_t* output, int& outLen,
-                       uint8_t* input,  int  inLen);
-            int finalize(uint8_t* output, int& outLen,
-                         uint8_t* input,  int  inLen);
+            int update(uint8_t* output,       int& outLen,
+                       const uint8_t* input,  int  inLen);
+            int finalize(uint8_t* output,       int& outLen,
+                         const uint8_t* input,  int  inLen);
 
             ~Cipher();
 
