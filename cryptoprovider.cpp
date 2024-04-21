@@ -86,10 +86,7 @@ RippaSSL::Cipher::Cipher(Algo              algo,
         }
     }
 
-    if (!FunctionPointers.cryptoInit(context,
-                                     handle,
-                                     const_cast<uint8_t*>(key),
-                                     const_cast<uint8_t*>(iv)))
+    if (!FunctionPointers.cryptoInit(context, handle, key, iv))
     {
         throw OpenSSLError_CryptoInit {};
     }
