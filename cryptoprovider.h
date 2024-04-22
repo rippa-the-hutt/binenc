@@ -27,6 +27,11 @@ namespace RippaSSL {
         algo_AES256ECB
     };
 
+    enum class MacMode
+    {
+        CMAC
+    };
+
     struct CipherFunctionPointers {
         int (*cryptoInit) (CipherCtx*           context,
                            const CipherHandle*  cipher,
@@ -82,7 +87,12 @@ namespace RippaSSL {
 
     class Cmac : public SymCryptoBase<CmacCtx, CmacHandle> {
         public:
-            Cmac();
+            Cmac(Algo           algo,
+                 MacMode        mode,
+                 const uint8_t* key,
+                 const uint8_t* iv,
+                 bool           padding = false);
+
             ~Cmac();
 
         private:

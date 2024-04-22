@@ -142,6 +142,24 @@ RippaSSL::Cipher::~Cipher()
     EVP_CIPHER_CTX_free(context);
 }
 
+RippaSSL::Cmac::Cmac(Algo           algo,
+                     MacMode        mode,
+                     const uint8_t* key,
+                     const uint8_t* iv,
+                     bool           padding)
+: RippaSSL::SymCryptoBase<CmacCtx, CmacHandle>(padding)
+{
+    std::string fetchedMac;
+    // fetches the required mode of operation (TODO: only CMAC supported now):
+    switch (mode)
+    {
+        case RippaSSL::MacMode::CMAC:
+            break;
+    }
+
+    EVP_MAC *mac = EVP_MAC_fetch(NULL, "cmac", NULL);
+}
+
 //TODO: CMAC part still to be done!
 int RippaSSL::performCmacOp(const char*          subAlg,
                             const unsigned char* key,    size_t  keyLen,
