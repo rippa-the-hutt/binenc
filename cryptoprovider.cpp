@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <iostream>
 #include <map>
+#include <string>
 
 const std::map<RippaSSL::Algo, int> blockSizes
     {
@@ -154,10 +155,11 @@ RippaSSL::Cmac::Cmac(Algo           algo,
     switch (mode)
     {
         case RippaSSL::MacMode::CMAC:
+            fetchedMac = "cmac";
             break;
     }
 
-    handle = EVP_MAC_fetch(NULL, "cmac", NULL);
+    handle = EVP_MAC_fetch(NULL, fetchedMac.c_str(), NULL);
 }
 
 RippaSSL::Cmac::~Cmac()
