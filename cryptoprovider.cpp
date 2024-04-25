@@ -160,6 +160,10 @@ RippaSSL::Cmac::Cmac(Algo           algo,
     handle = EVP_MAC_fetch(NULL, "cmac", NULL);
 }
 
+RippaSSL::Cmac::~Cmac()
+{
+}
+
 //TODO: CMAC part still to be done!
 int RippaSSL::performCmacOp(const char*          subAlg,
                             const unsigned char* key,    size_t  keyLen,
