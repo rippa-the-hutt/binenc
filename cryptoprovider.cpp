@@ -147,7 +147,7 @@ RippaSSL::Cmac::Cmac(Algo           algo,
                      const uint8_t* key,
                      const uint8_t* iv,
                      bool           padding)
-: RippaSSL::SymCryptoBase<CmacCtx, CmacHandle>(padding)
+: SymCryptoBase(padding)
 {
     std::string fetchedMac;
     // fetches the required mode of operation (TODO: only CMAC supported now):
@@ -157,7 +157,7 @@ RippaSSL::Cmac::Cmac(Algo           algo,
             break;
     }
 
-    EVP_MAC *mac = EVP_MAC_fetch(NULL, "cmac", NULL);
+    handle = EVP_MAC_fetch(NULL, "cmac", NULL);
 }
 
 //TODO: CMAC part still to be done!
