@@ -178,13 +178,20 @@ RippaSSL::Cmac::Cmac(Algo           algo,
     handle = EVP_MAC_fetch(NULL, fetchedMac.c_str(), NULL);
 
     // prepares the parameters to be passed to the OpenSSL init function:
-    OSSL_PARAM params[2] = {0};
-    params[0] = OSSL_PARAM_construct_utf8_string(
-                            "cipher",
-                            const_cast<char*>(macAlgo.c_str()),
-                            0);
-
-    params[1] = OSSL_PARAM_construct_end();
+    OSSL_PARAM params[] = {
+                            // array element 0:
+                            OSSL_PARAM_construct_utf8_string(
+                                "cipher",
+                                const_cast<char*>(macAlgo.c_str()),
+                                0),
+                            // array element 1 (ending one):
+                            OSSL_PARAM_construct_end()
+                          };
+    // params[0] = OSSL_PARAM_construct_utf8_string(
+    //                         "cipher",
+    //                         const_cast<char*>(macAlgo.c_str()),
+    //                         0);
+    //  params[1] = OSSL_PARAM_construct_end();
     // OSSL_PARAM params[] = {
     //                         {
     //                             .key = "cipher",
