@@ -223,6 +223,8 @@ RippaSSL::Cmac::Cmac(Algo           algo,
 
 RippaSSL::Cmac::~Cmac()
 {
+    EVP_MAC_CTX_free(context);
+    EVP_MAC_free(const_cast<CmacHandle*>(handle));
 }
 
 //TODO: CMAC part still to be done!
