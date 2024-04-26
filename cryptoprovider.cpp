@@ -156,7 +156,7 @@ RippaSSL::Cmac::Cmac(Algo           algo,
 : SymCryptoBase(padding)
 {
     std::string fetchedMac;
-    // throws std::out_of_range!
+    //TODO: throws std::out_of_range if algo doesn't map to a valid key!
     const std::string macAlgo {cmacAlgoMap.at(algo)};
 
     //TODO: we should really explode these parameters to a struct, to
@@ -164,14 +164,6 @@ RippaSSL::Cmac::Cmac(Algo           algo,
     const int keyLen = ((RippaSSL::Algo::algo_AES256ECB == algo) ||
                         (RippaSSL::Algo::algo_AES256CBC == algo)) ?
                             32 : 16;
-
-    // if supplied with a new/unrecognized key, std::map will append a new item
-    // to its list, calling T's default constructor that, in the std::string
-    // case, is an empty string with size 0:
-    if (0 == macAlgo.size())
-    {
-        throw InputError_NULLPTR {};
-    }
 
     // fetches the required mode of operation (TODO: only CMAC supported now):
     switch (mode)
