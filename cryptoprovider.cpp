@@ -158,6 +158,12 @@ RippaSSL::Cmac::Cmac(Algo           algo,
     std::string fetchedMac;
     const std::string macAlgo {cmacAlgoMap[algo]};
 
+    //TODO: we should really explode these parameters to a struct, to
+    //      decrease the amount of needed switches:
+    const int keyLen = ((RippaSSL::Algo::algo_AES256ECB == algo) ||
+                        (RippaSSL::Algo::algo_AES256CBC == algo)) ?
+                            32 : 16;
+
     // if supplied with a new/unrecognized key, std::map will append a new item
     // to its list, calling T's default constructor that, in the std::string
     // case, is an empty string with size 0:
@@ -202,6 +208,17 @@ RippaSSL::Cmac::Cmac(Algo           algo,
     //                         {.key = NULL}   // ending element, as required
     //                                         // by openssl.
     //                       };
+
+
+    if ((NULL == handle)                                           ||
+        (NULL == key)                                              ||
+        (NULL == (context = EVP_MAC_CTX_new(
+                                const_cast<CmacHandle*>(handle)))) ||
+        !EVP_MAC_init(context, (const unsigned char *) key, keyLen, params)
+       )
+    {
+        throw InputError_NULLPTR {};
+    }
 }
 
 RippaSSL::Cmac::~Cmac()
@@ -216,10 +233,10 @@ int RippaSSL::performCmacOp(const char*          subAlg,
                             unsigned char*       out,    size_t* outLen)
 {
     int rc = 1;
-    EVP_MAC_CTX *ctx = NULL;
+    EVP_MAC_CTX* ctx = NULL;
 
     // fetches the CMAC mode of operation:
-    EVP_MAC *mac = EVP_MAC_fetch(NULL, "cmac", NULL);
+    EVP_MAC* mac = EVP_MAC_fetch(NULL, "cmac", NULL);
 
     do
     {
