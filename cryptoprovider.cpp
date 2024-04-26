@@ -186,22 +186,6 @@ RippaSSL::Cmac::Cmac(Algo           algo,
                             // array element 1 (ending one):
                             OSSL_PARAM_construct_end()
                           };
-    // params[0] = OSSL_PARAM_construct_utf8_string(
-    //                         "cipher",
-    //                         const_cast<char*>(macAlgo.c_str()),
-    //                         0);
-    //  params[1] = OSSL_PARAM_construct_end();
-    // OSSL_PARAM params[] = {
-    //                         {
-    //                             .key = "cipher",
-    //                             .data_type = OSSL_PARAM_UTF8_STRING,
-    //                             .data = (char*) subAlg, // we trust OpenSSL
-    //                             .data_size = 6
-    //                         },
-    //                         {.key = NULL}   // ending element, as required
-    //                                         // by openssl.
-    //                       };
-
 
     if ((NULL == handle)                                           ||
         (NULL == key)                                              ||
