@@ -214,6 +214,11 @@ RippaSSL::Cmac::Cmac(Algo           algo,
     }
 }
 
+int RippaSSL::Cmac::update(uint8_t* output,       int& outLen,
+                          const uint8_t* input,  int  inLen)
+{
+}
+
 RippaSSL::Cmac::~Cmac()
 {
     EVP_MAC_CTX_free(context);

@@ -93,6 +93,9 @@ namespace RippaSSL {
                  const uint8_t* iv,
                  bool           padding = false);
 
+            int update(uint8_t* output,       int& outLen,
+                       const uint8_t* input,  int  inLen);
+
             ~Cmac();
 
         private:
