@@ -143,6 +143,11 @@ RippaSSL::Cipher::~Cipher()
     EVP_CIPHER_CTX_free(context);
 }
 
+std::map<RippaSSL::Algo, std::string> cmacAlgoMap {
+    {RippaSSL::Algo::algo_AES128CBC, "aes-128-cbc"},
+    {RippaSSL::Algo::algo_AES256CBC, "aes-256-cbc"}
+};
+
 RippaSSL::Cmac::Cmac(Algo           algo,
                      MacMode        mode,
                      const uint8_t* key,
@@ -151,15 +156,45 @@ RippaSSL::Cmac::Cmac(Algo           algo,
 : SymCryptoBase(padding)
 {
     std::string fetchedMac;
+    const std::string macAlgo {cmacAlgoMap[algo]};
+
+    // if supplied with a new/unrecognized key, std::map will append a new item
+    // to its list, calling T's default constructor that, in the std::string
+    // case, is an empty string with size 0:
+    if (0 == macAlgo.size())
+    {
+        throw InputError_NULLPTR {};
+    }
+
     // fetches the required mode of operation (TODO: only CMAC supported now):
     switch (mode)
     {
         case RippaSSL::MacMode::CMAC:
-            fetchedMac = "cmac";
+            fetchedMac =  "cmac";
+
             break;
     }
 
     handle = EVP_MAC_fetch(NULL, fetchedMac.c_str(), NULL);
+
+    // prepares the parameters to be passed to the OpenSSL init function:
+    OSSL_PARAM params[2] = {0};
+    params[0] = OSSL_PARAM_construct_utf8_string(
+                            "cipher",
+                            const_cast<char*>(macAlgo.c_str()),
+                            0);
+
+    params[1] = OSSL_PARAM_construct_end();
+    // OSSL_PARAM params[] = {
+    //                         {
+    //                             .key = "cipher",
+    //                             .data_type = OSSL_PARAM_UTF8_STRING,
+    //                             .data = (char*) subAlg, // we trust OpenSSL
+    //                             .data_size = 6
+    //                         },
+    //                         {.key = NULL}   // ending element, as required
+    //                                         // by openssl.
+    //                       };
 }
 
 RippaSSL::Cmac::~Cmac()
