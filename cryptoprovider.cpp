@@ -143,7 +143,7 @@ RippaSSL::Cipher::~Cipher()
     EVP_CIPHER_CTX_free(context);
 }
 
-std::map<RippaSSL::Algo, std::string> cmacAlgoMap {
+const std::map<RippaSSL::Algo, std::string> cmacAlgoMap {
     {RippaSSL::Algo::algo_AES128CBC, "aes-128-cbc"},
     {RippaSSL::Algo::algo_AES256CBC, "aes-256-cbc"}
 };
@@ -156,7 +156,8 @@ RippaSSL::Cmac::Cmac(Algo           algo,
 : SymCryptoBase(padding)
 {
     std::string fetchedMac;
-    const std::string macAlgo {cmacAlgoMap[algo]};
+    // throws std::out_of_range!
+    const std::string macAlgo {cmacAlgoMap.at(algo)};
 
     //TODO: we should really explode these parameters to a struct, to
     //      decrease the amount of needed switches:
