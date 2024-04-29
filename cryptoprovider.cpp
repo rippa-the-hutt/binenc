@@ -18,8 +18,9 @@ const std::map<RippaSSL::Algo, int> blockSizes
     };
 
 template<typename CTX, typename HND>
-RippaSSL::SymCryptoBase<CTX, HND>::SymCryptoBase(bool padding)
-: context {nullptr}, handle {nullptr}, requirePadding {padding}
+RippaSSL::SymCryptoBase<CTX, HND>::SymCryptoBase(Algo algo, bool padding)
+: context {nullptr},       handle {nullptr},
+  currentAlgorithm {algo}, requirePadding {padding}
 {
     // nothing required.
 }
@@ -41,7 +42,7 @@ RippaSSL::Cipher::Cipher(Algo                       algo,
                          const std::vector<uint8_t> key,
                          const std::vector<uint8_t> iv,
                          bool                       padding)
-: SymCryptoBase(padding)
+: SymCryptoBase(algo, padding)
 {
     if ((NULL == key) || (NULL == (context = EVP_CIPHER_CTX_new())))
     {
@@ -104,7 +105,7 @@ int RippaSSL::Cipher::update(      std::vector<uint8_t> output,
     //TODO: we need the famous Algo struct to hold meta information, such
     //      as the cipher block size!
     int requiredMemory = (requirePadding) ?
-                            input.size() + (AES_BLOCK_SIZE -
+                            input.size() + (blockSizes(currentAlgorithm) -
                                             (input.size() % AES_BLOCK_SIZE)) :
                             input.size();
 
@@ -167,7 +168,7 @@ RippaSSL::Cmac::Cmac(Algo           algo,
                      const uint8_t* key,
                      const uint8_t* iv,
                      bool           padding)
-: SymCryptoBase(padding)
+: SymCryptoBase(algo, padding)
 {
     std::string fetchedMac;
     // throws std::out_of_range if algo doesn't map to a valid key!

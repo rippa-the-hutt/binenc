@@ -5,7 +5,6 @@
 #include <openssl/params.h>
 #include <vector>
 
-constexpr int AES_BLOCK_SIZE = 16;
 typedef EVP_MAC_CTX     CmacCtx;
 typedef EVP_MAC         CmacHandle;
 typedef EVP_CIPHER_CTX  CipherCtx;
@@ -54,7 +53,7 @@ namespace RippaSSL {
     template<typename CTX, typename HND>
     class SymCryptoBase {
         public:
-            SymCryptoBase(bool padding);
+            SymCryptoBase(Algo algo, bool padding);
             virtual ~SymCryptoBase() = 0;
 
             virtual int update(      std::vector<uint8_t> output,
@@ -65,6 +64,7 @@ namespace RippaSSL {
         protected:
             CTX* context;
             const HND* handle;
+            Algo currentAlgorithm;
             bool requirePadding;
     };
 
