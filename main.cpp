@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstring>
 #include <cstdarg>
+#include <vector>
 
 #include <openssl/evp.h>
 #include <openssl/params.h>
@@ -13,9 +14,11 @@
 int main(int argc, char* argv[])
 {
     unsigned char buf[4096];
-    unsigned char iv[16];
+    //unsigned char iv[16];
+    std::vector<uint8_t> iv;
     unsigned char* iv_ptr = NULL;
-    unsigned char key[32];
+    //unsigned char key[32];
+    std::vector<uint8_t> key;
     RippaSSL::Algo     algo;
     RippaSSL::BcmMode  bcm;
     int msgIdx;
@@ -62,7 +65,7 @@ int main(int argc, char* argv[])
         }
     }
 
-    size_t keyLen = BIO_readHexBinary(argv[2], key);
+    size_t keyLen = BIO_readHexBinary(argv[2], &key[0]);
     if ((16 != keyLen) && (32 != keyLen))
     {
         printf("Wrong key length: %lu!\n", keyLen);
@@ -71,13 +74,13 @@ int main(int argc, char* argv[])
 
     if (argc == 5)
     {
-        if (16 != BIO_readHexBinary(argv[3], iv))
+        if (16 != BIO_readHexBinary(argv[3], &iv[0]))
         {
             printf("Wrong iv length!\n");
             exit(1);
         }
 
-        iv_ptr = iv;
+        iv_ptr = &iv[0];
         msgIdx = 4;
     }
     else if ((algo == RippaSSL::Algo::algo_AES128CBC) ||
@@ -94,10 +97,13 @@ int main(int argc, char* argv[])
     // reads the input message and places it into buf:
     int msgLen = BIO_readHexBinary(argv[msgIdx], buf);
 
+    std::vector<uint8_t> msgVector;
+    msgVector.insert(msgVector.begin(), buf, buf + msgLen);
+
     // creates the relevant object:
     try {
         RippaSSL::Cipher myCbc {algo, bcm, key, iv_ptr};
-        myCbc.finalize(buf, msgLen, buf, msgLen);
+        myCbc.finalize(msgVector, msgVector);
     }
     catch (RippaSSL::InputError_NULLPTR) {
         printf("Error! The key pointer is invalid, or something nasty happened"

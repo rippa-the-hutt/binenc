@@ -20,7 +20,8 @@ const std::map<RippaSSL::Algo, int> blockSizes
 template<typename CTX, typename HND>
 RippaSSL::SymCryptoBase<CTX, HND>::SymCryptoBase(Algo algo, bool padding)
 : context {nullptr},       handle {nullptr},
-  currentAlgorithm {algo}, requirePadding {padding}
+  currentAlgorithm {algo},
+  alreadyUpdatedData {}, requirePadding {padding}
 {
     // nothing required.
 }
@@ -40,11 +41,11 @@ immediately employable entity.
 RippaSSL::Cipher::Cipher(Algo                       algo,
                          BcmMode                    mode,
                          const std::vector<uint8_t> key,
-                         const std::vector<uint8_t> iv,
+                         const uint8_t*             iv,
                          bool                       padding)
 : SymCryptoBase(algo, padding)
 {
-    if ((NULL == key) || (NULL == (context = EVP_CIPHER_CTX_new())))
+    if (NULL == (context = EVP_CIPHER_CTX_new()))
     {
         throw InputError_NULLPTR {};
     }
@@ -100,51 +101,54 @@ RippaSSL::Cipher::Cipher(Algo                       algo,
 int RippaSSL::Cipher::update(      std::vector<uint8_t> output,
                              const std::vector<uint8_t> input)
 {
-    // checks whether the output vector needs more reserved space for
-    // the update function to work properly:
-    //TODO: we need the famous Algo struct to hold meta information, such
-    //      as the cipher block size!
-    int requiredMemory = (requirePadding) ?
-                            input.size() + (blockSizes(currentAlgorithm) -
-                                            (input.size() % AES_BLOCK_SIZE)) :
-                            input.size();
-
-    if (output.capacity() < requiredMemory)
-    {
-        output.resize(requiredMemory);
-    }
-
-    if(!FunctionPointers.cryptoUpdate(context, &output[0], &input[0]))
+    int outLen = 0;
+    if (!FunctionPointers.cryptoUpdate(context, &output[0], &outLen,
+                                                &input[0],  input.size()))
     {
         throw OpenSSLError_CryptoUpdate {};
     }
 
-    return 0;
+    alreadyUpdatedData += input.size();
+
+    return outLen;
 }
 
-int RippaSSL::Cipher::finalize(uint8_t* output,       int& outLen,
-                               const uint8_t* input,  int  inLen)
+int RippaSSL::Cipher::finalize(      std::vector<uint8_t> output,
+                               const std::vector<uint8_t> input)
 {
-    int updateLen   = 0;
     int finalizeLen = 0;
 
-    if (input != nullptr)
+    if (input.size())
     {
         try {
-            update(output, updateLen, input, inLen);
+            // checks whether the output vector needs more reserved space for
+            // the update function to work properly:
+            unsigned int requiredMemory = alreadyUpdatedData + input.size();
+            requiredMemory +=
+                (requirePadding) ?
+                    blockSizes.at(currentAlgorithm) -
+                       (input.size() % blockSizes.at(currentAlgorithm)) :
+                    0;
+
+            if (output.capacity() < requiredMemory)
+            {
+                output.resize(requiredMemory);
+            }
+
+            update(output, input);
         } catch (OpenSSLError_CryptoUpdate) {
             throw OpenSSLError_CryptoFinalize {};
+        } catch (InputError_MISALIGNED_DATA) {
+            throw;
         }
     }
 
-    if (!FunctionPointers.cryptoFinal(context, output, &finalizeLen))
+    if (!FunctionPointers.cryptoFinal(context, &output[0], &finalizeLen))
     {
         throw OpenSSLError_CryptoFinalize {};
     }
 
-    outLen = updateLen + finalizeLen;
-
-    return 0;
+    return finalizeLen;
 }
 
 /*!
@@ -163,22 +167,16 @@ const std::map<RippaSSL::Algo, std::string> cmacAlgoMap {
     {RippaSSL::Algo::algo_AES256CBC, "aes-256-cbc"}
 };
 
-RippaSSL::Cmac::Cmac(Algo           algo,
-                     MacMode        mode,
-                     const uint8_t* key,
-                     const uint8_t* iv,
-                     bool           padding)
+RippaSSL::Cmac::Cmac(Algo                       algo,
+                     MacMode                    mode,
+                     const std::vector<uint8_t> key,
+                     const uint8_t*             iv,
+                     bool                       padding)
 : SymCryptoBase(algo, padding)
 {
     std::string fetchedMac;
     // throws std::out_of_range if algo doesn't map to a valid key!
     const std::string macAlgo {cmacAlgoMap.at(algo)};
-
-    //TODO: we should really explode these parameters to a struct, to
-    //      decrease the amount of needed switches:
-    const int keyLen = ((RippaSSL::Algo::algo_AES256ECB == algo) ||
-                        (RippaSSL::Algo::algo_AES256CBC == algo)) ?
-                            32 : 16;
 
     // fetches the required mode of operation (TODO: only CMAC supported now):
     switch (mode)
@@ -203,10 +201,12 @@ RippaSSL::Cmac::Cmac(Algo           algo,
                           };
 
     if ((NULL == handle)                                           ||
-        (NULL == key)                                              ||
+        (NULL == &key[0])                                          ||
         (NULL == (context = EVP_MAC_CTX_new(
                                 const_cast<CmacHandle*>(handle)))) ||
-        !EVP_MAC_init(context, (const unsigned char *) key, keyLen, params)
+        !EVP_MAC_init(context,
+                      (const unsigned char *) &key[0], key.size(),
+                      params)
        )
     {
         throw InputError_NULLPTR {};
@@ -214,12 +214,12 @@ RippaSSL::Cmac::Cmac(Algo           algo,
 
     if (nullptr != iv)
     {
-        EVP_MAC_update(ctx, iv, ivLen);
+        EVP_MAC_update(context, iv, blockSizes.at(algo));
     }
 }
 
-int RippaSSL::Cmac::update(uint8_t* output,       int& outLen,
-                           const uint8_t* input,  int  inLen)
+int RippaSSL::Cmac::update(      std::vector<uint8_t> output,
+                           const std::vector<uint8_t> input)
 {
 }
 

@@ -65,6 +65,7 @@ namespace RippaSSL {
             CTX* context;
             const HND* handle;
             Algo currentAlgorithm;
+            int alreadyUpdatedData;
             bool requirePadding;
     };
 
@@ -73,12 +74,12 @@ namespace RippaSSL {
             Cipher(Algo                          algo,
                    BcmMode                       mode,
                    const std::vector<uint8_t>    key,
-                   const std::vector<uint8_t>    iv,
+                   const uint8_t*                iv,
                    bool                          padding = false);
 
             int update(      std::vector<uint8_t> output,
                        const std::vector<uint8_t> input);
-            int finalize(      std::vector<uint8_t> output,,
+            int finalize(      std::vector<uint8_t> output,
                          const std::vector<uint8_t> input);
 
             ~Cipher();
@@ -89,13 +90,13 @@ namespace RippaSSL {
 
     class Cmac : public SymCryptoBase<CmacCtx, CmacHandle> {
         public:
-            Cmac(Algo           algo,
-                 MacMode        mode,
-                 const uint8_t* key,
-                 const uint8_t* iv,
-                 bool           padding = false);
+            Cmac(Algo                       algo,
+                 MacMode                    mode,
+                 const std::vector<uint8_t> key,
+                 const uint8_t*             iv,
+                 bool                       padding = false);
 
-            int update(      std::vector<uint8_t> outputoutLen,
+            int update(      std::vector<uint8_t> output,
                        const std::vector<uint8_t> input);
 
             ~Cmac();
