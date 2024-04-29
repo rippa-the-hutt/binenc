@@ -3,7 +3,9 @@
 
 #include <openssl/evp.h>
 #include <openssl/params.h>
+#include <vector>
 
+constexpr int AES_BLOCK_SIZE = 16;
 typedef EVP_MAC_CTX     CmacCtx;
 typedef EVP_MAC         CmacHandle;
 typedef EVP_CIPHER_CTX  CipherCtx;
@@ -55,10 +57,10 @@ namespace RippaSSL {
             SymCryptoBase(bool padding);
             virtual ~SymCryptoBase() = 0;
 
-            virtual int update(uint8_t* output,       int& outLen,
-                               const uint8_t* input,  int  inLen) = 0;
-            virtual int finalize(uint8_t* output,       int& outputLen,
-                                 const uint8_t* input,  int  inLen) = 0;
+            virtual int update(      std::vector<uint8_t> output,
+                               const std::vector<uint8_t> input) = 0;
+            virtual int finalize(      std::vector<uint8_t> output,
+                                 const std::vector<uint8_t> input) = 0;
 
         protected:
             CTX* context;
@@ -68,16 +70,16 @@ namespace RippaSSL {
 
     class Cipher : public SymCryptoBase<CipherCtx, CipherHandle> {
         public:
-            Cipher(Algo              algo,
-                   BcmMode           mode,
-                   const uint8_t*    key,
-                   const uint8_t*    iv,
-                   bool              padding = false);
+            Cipher(Algo                          algo,
+                   BcmMode                       mode,
+                   const std::vector<uint8_t>    key,
+                   const std::vector<uint8_t>    iv,
+                   bool                          padding = false);
 
-            int update(uint8_t* output,       int& outLen,
-                       const uint8_t* input,  int  inLen);
-            int finalize(uint8_t* output,       int& outLen,
-                         const uint8_t* input,  int  inLen);
+            int update(      std::vector<uint8_t> output,
+                       const std::vector<uint8_t> input);
+            int finalize(      std::vector<uint8_t> output,,
+                         const std::vector<uint8_t> input);
 
             ~Cipher();
 
@@ -93,8 +95,8 @@ namespace RippaSSL {
                  const uint8_t* iv,
                  bool           padding = false);
 
-            int update(uint8_t* output,       int& outLen,
-                       const uint8_t* input,  int  inLen);
+            int update(      std::vector<uint8_t> outputoutLen,
+                       const std::vector<uint8_t> input);
 
             ~Cmac();
 

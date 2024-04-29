@@ -36,11 +36,11 @@ Constructor for the symmetric encryption/decryption object. It will initialise
 it with proper values, so that on object instantiation, the user gets an
 immediately employable entity.
 */
-RippaSSL::Cipher::Cipher(Algo              algo,
-                         BcmMode           mode,
-                         const uint8_t*    key,
-                         const uint8_t*    iv,
-                         bool              padding)
+RippaSSL::Cipher::Cipher(Algo                       algo,
+                         BcmMode                    mode,
+                         const std::vector<uint8_t> key,
+                         const std::vector<uint8_t> iv,
+                         bool                       padding)
 : SymCryptoBase(padding)
 {
     if ((NULL == key) || (NULL == (context = EVP_CIPHER_CTX_new())))
@@ -87,7 +87,7 @@ RippaSSL::Cipher::Cipher(Algo              algo,
         }
     }
 
-    if (!FunctionPointers.cryptoInit(context, handle, key, iv))
+    if (!FunctionPointers.cryptoInit(context, handle, &key[0], &iv[0]))
     {
         throw OpenSSLError_CryptoInit {};
     }
@@ -96,10 +96,24 @@ RippaSSL::Cipher::Cipher(Algo              algo,
     EVP_CIPHER_CTX_set_padding(context, requirePadding);
 }
 
-int RippaSSL::Cipher::update(uint8_t* output,       int& outLen,
-                             const uint8_t* input,  int  inLen)
+int RippaSSL::Cipher::update(      std::vector<uint8_t> output,
+                             const std::vector<uint8_t> input)
 {
-    if(!FunctionPointers.cryptoUpdate(context, output, &outLen, input, inLen))
+    // checks whether the output vector needs more reserved space for
+    // the update function to work properly:
+    //TODO: we need the famous Algo struct to hold meta information, such
+    //      as the cipher block size!
+    int requiredMemory = (requirePadding) ?
+                            input.size() + (AES_BLOCK_SIZE -
+                                            (input.size() % AES_BLOCK_SIZE)) :
+                            input.size();
+
+    if (output.capacity() < requiredMemory)
+    {
+        output.resize(requiredMemory);
+    }
+
+    if(!FunctionPointers.cryptoUpdate(context, &output[0], &input[0]))
     {
         throw OpenSSLError_CryptoUpdate {};
     }
@@ -156,7 +170,7 @@ RippaSSL::Cmac::Cmac(Algo           algo,
 : SymCryptoBase(padding)
 {
     std::string fetchedMac;
-    //TODO: throws std::out_of_range if algo doesn't map to a valid key!
+    // throws std::out_of_range if algo doesn't map to a valid key!
     const std::string macAlgo {cmacAlgoMap.at(algo)};
 
     //TODO: we should really explode these parameters to a struct, to
@@ -196,10 +210,15 @@ RippaSSL::Cmac::Cmac(Algo           algo,
     {
         throw InputError_NULLPTR {};
     }
+
+    if (nullptr != iv)
+    {
+        EVP_MAC_update(ctx, iv, ivLen);
+    }
 }
 
 int RippaSSL::Cmac::update(uint8_t* output,       int& outLen,
-                          const uint8_t* input,  int  inLen)
+                           const uint8_t* input,  int  inLen)
 {
 }
 
