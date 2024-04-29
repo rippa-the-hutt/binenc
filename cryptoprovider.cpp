@@ -9,14 +9,6 @@
 #include <map>
 #include <string>
 
-const std::map<RippaSSL::Algo, int> blockSizes
-    {
-        {RippaSSL::Algo::algo_AES128CBC, 16},
-        {RippaSSL::Algo::algo_AES128ECB, 16},
-        {RippaSSL::Algo::algo_AES256CBC, 16},
-        {RippaSSL::Algo::algo_AES256ECB, 16}
-    };
-
 template<typename CTX, typename HND>
 RippaSSL::SymCryptoBase<CTX, HND>::SymCryptoBase(Algo algo, bool padding)
 : context {nullptr},       handle {nullptr},

@@ -4,6 +4,7 @@
 #include <openssl/evp.h>
 #include <openssl/params.h>
 #include <vector>
+#include <map>
 
 typedef EVP_MAC_CTX     CmacCtx;
 typedef EVP_MAC         CmacHandle;
@@ -27,6 +28,15 @@ namespace RippaSSL {
         algo_AES256CBC,
         algo_AES256ECB
     };
+
+    const std::map<RippaSSL::Algo, size_t> blockSizes
+    {
+        {RippaSSL::Algo::algo_AES128CBC, 16},
+        {RippaSSL::Algo::algo_AES128ECB, 16},
+        {RippaSSL::Algo::algo_AES256CBC, 16},
+        {RippaSSL::Algo::algo_AES256ECB, 16}
+    };
+
 
     enum class MacMode
     {

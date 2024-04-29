@@ -6,6 +6,8 @@
 #include <cstring>
 #include <cstdarg>
 #include <vector>
+#include <ios>
+#include <sstream>
 
 #include <openssl/evp.h>
 #include <openssl/params.h>
@@ -65,16 +67,42 @@ int main(int argc, char* argv[])
         }
     }
 
-    size_t keyLen = BIO_readHexBinary(argv[2], &key[0]);
-    if ((16 != keyLen) && (32 != keyLen))
+    //size_t keyLen = BIO_readHexBinary(argv[2], &key[0]);
+    //if ((16 != keyLen) && (32 != keyLen))
+    //{
+    //    printf("Wrong key length: %lu!\n", keyLen);
+    //    exit(1);
+    //}
+
     {
-        printf("Wrong key length: %lu!\n", keyLen);
-        exit(1);
+        std::string argString {argv[2]};
+        for (size_t i = 0; i < argString.length(); i += 2)
+        {
+            std::istringstream strstream {argString.substr(i, 2)};
+            int curByte;
+            strstream >> std::hex >> curByte;
+            key.push_back(curByte);
+        }
+        if ((16 != key.size()) && (32 != key.size()))
+        {
+            printf("Wrong key length: %lu!\n", key.size());
+            exit(1);
+        }
     }
 
     if (argc == 5)
     {
-        if (16 != BIO_readHexBinary(argv[3], &iv[0]))
+        std::string argString {argv[3]};
+
+        for (size_t i = 0; i < argString.length(); i += 2)
+        {
+            std::istringstream strstream {argString.substr(i, 2)};
+            int curByte;
+            strstream >> std::hex >> curByte;
+            iv.push_back(curByte);
+        }
+        //if (16 != BIO_readHexBinary(argv[3], &iv[0]))
+        if (RippaSSL::blockSizes.at(algo) != iv.size())
         {
             printf("Wrong iv length!\n");
             exit(1);
