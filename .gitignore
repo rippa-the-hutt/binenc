@@ -6,3 +6,4 @@ tags
 # output files:
 *.o
 binenc
+debug
