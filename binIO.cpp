@@ -2,12 +2,8 @@
 #include "binIO.h"
 
 #include <string.h>
-#include <stdio.h>
-#include <stdint.h>
-
-#ifdef  __cplusplus
-extern "C" {
-#endif
+#include <cstdio>
+#include <cstdint>
 
 size_t BIO_readHexBinary(const char* is, unsigned char* binOut)
 {
@@ -50,7 +46,3 @@ int BIO_printHexBinary(const unsigned char* buf, size_t bufLen)
 
     return 0;
 }
-
-#ifdef  __cplusplus
-}
-#endif

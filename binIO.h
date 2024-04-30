@@ -1,11 +1,7 @@
 #ifndef BININPUTOUTPUT_H
 #define BININPUTOUTPUT_H
 
-#include <stdio.h>
-
-#ifdef  __cplusplus
-extern "C" {
-#endif
+#include <cstdio>
 
 /*!
 Reads a hex-encoded stream of data from the NULL-terminated char buffer "is" and places its binary
@@ -19,10 +15,5 @@ Prints a binary array in its HEX representation.
 Returns 0 if successful.
 */
 int BIO_printHexBinary(const unsigned char* buf, size_t bufLen);
-
-#ifdef  __cplusplus
-}
-#endif
-
 
 #endif
