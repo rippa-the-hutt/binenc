@@ -133,23 +133,23 @@ int main(int argc, char* argv[])
         RippaSSL::Cipher myCbc {algo, bcm, key, iv_ptr};
         myCbc.finalize(msgVector, msgVector);
     }
-    catch (RippaSSL::InputError_NULLPTR) {
+    catch (RippaSSL::InputError_NULLPTR& nullPtr) {
         printf("Error! The key pointer is invalid, or something nasty happened"
         " while calling OpenSSL's EVP_CIPHER_CTX_new()!\n");
 
         return 1;
     }
-    catch (RippaSSL::OpenSSLError_CryptoInit) {
+    catch (RippaSSL::OpenSSLError_CryptoInit& ci) {
         printf("Error! OpenSSL failed to call its Init method!\n");
 
         return 1;
     }
-    catch (RippaSSL::OpenSSLError_CryptoUpdate) {
+    catch (RippaSSL::OpenSSLError_CryptoUpdate& cu) {
         printf("Error! OpenSSL failed to call its Update method!\n");
 
         return 1;
     }
-    catch (RippaSSL::OpenSSLError_CryptoFinalize) {
+    catch (RippaSSL::OpenSSLError_CryptoFinalize& cf) {
         printf("Error: OpenSSL failed to call its Finalize method!\n");
 
         return 1;

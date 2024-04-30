@@ -128,9 +128,9 @@ int RippaSSL::Cipher::finalize(      std::vector<uint8_t> output,
             }
 
             update(output, input);
-        } catch (OpenSSLError_CryptoUpdate) {
+        } catch (OpenSSLError_CryptoUpdate& cu) {
             throw OpenSSLError_CryptoFinalize {};
-        } catch (InputError_MISALIGNED_DATA) {
+        } catch (InputError_MISALIGNED_DATA& misdata) {
             throw;
         }
     }
