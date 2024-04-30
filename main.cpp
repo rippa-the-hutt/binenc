@@ -29,11 +29,12 @@ int main(int argc, char* argv[])
     if ((argc < 4) || (argc > 5))
     {
         printf("Usage: binenc MODE KEY [IV] MESSAGE\n"
-               "    The key shall be provided without spaces. The same applies to the message and "
-               "IV.\n"
+               "    The key shall be provided without spaces. The same applies"
+               " to the message and IV.\n"
                "    An example usage:\n"
-               "    $ ./binenc AES128CBC 000102030405060708090A0B0C0D0E0F 000000000000000000000000"
-               "00000000 000102030405060708090A0B0C0D0E0F000102030405060708090A0B0C0D0E0F\n");
+               "    $ ./binenc AES128CBC 000102030405060708090A0B0C0D0E0F "
+               "00000000000000000000000000000000 000102030405060708090A0B0C0D0E"
+               "0F000102030405060708090A0B0C0D0E0F\n");
         return 1;
     }
 
