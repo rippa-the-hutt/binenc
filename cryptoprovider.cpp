@@ -90,8 +90,8 @@ RippaSSL::Cipher::Cipher(Algo                       algo,
     EVP_CIPHER_CTX_set_padding(context, requirePadding);
 }
 
-int RippaSSL::Cipher::update(      std::vector<uint8_t> output,
-                             const std::vector<uint8_t> input)
+int RippaSSL::Cipher::update(      std::vector<uint8_t>& output,
+                             const std::vector<uint8_t>  input)
 {
     int outLen = 0;
     if (!FunctionPointers.cryptoUpdate(context, &output[0], &outLen,
@@ -105,8 +105,8 @@ int RippaSSL::Cipher::update(      std::vector<uint8_t> output,
     return outLen;
 }
 
-int RippaSSL::Cipher::finalize(      std::vector<uint8_t> output,
-                               const std::vector<uint8_t> input)
+int RippaSSL::Cipher::finalize(      std::vector<uint8_t>& output,
+                               const std::vector<uint8_t>  input)
 {
     int finalizeLen = 0;
 
@@ -210,8 +210,8 @@ RippaSSL::Cmac::Cmac(Algo                       algo,
     }
 }
 
-int RippaSSL::Cmac::update(      std::vector<uint8_t> output,
-                           const std::vector<uint8_t> input)
+int RippaSSL::Cmac::update(      std::vector<uint8_t>& output,
+                           const std::vector<uint8_t>  input)
 {
 }
 

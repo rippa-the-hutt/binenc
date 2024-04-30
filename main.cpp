@@ -7,6 +7,7 @@
 #include <cstdarg>
 #include <vector>
 #include <ios>
+#include <iostream>
 #include <sstream>
 
 #include <openssl/evp.h>
@@ -128,6 +129,12 @@ int main(int argc, char* argv[])
     std::vector<uint8_t> msgVector;
     msgVector.insert(msgVector.begin(), buf, buf + msgLen);
 
+    for (size_t i = 0; i < msgVector.size(); ++i)
+    {
+        std::cout << static_cast<int>(msgVector[i]) << " ";
+    }
+    std::cout << std::endl;
+
     // creates the relevant object:
     try {
         RippaSSL::Cipher myCbc {algo, bcm, key, iv_ptr};
@@ -157,7 +164,7 @@ int main(int argc, char* argv[])
 
     // prints the result:
     printf("Result: ");
-    BIO_printHexBinary(buf, msgLen);
+    BIO_printHexBinary(&msgVector[0], msgVector.size());
 
     return 0;
 }
