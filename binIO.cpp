@@ -17,7 +17,8 @@ size_t BIO_readHexBinary(const char* is, unsigned char* binOut)
     // retrieves the actual binOut length:
     outLen /= 2u;
 
-    // reads the binOut from inputargument. The caller is responsible to allocate enough ram:
+    // reads the binOut from inputargument. The caller is responsible to
+    // allocate enough ram:
     if (binOut != NULL)
     {
         const char* pos = is;
@@ -26,8 +27,11 @@ size_t BIO_readHexBinary(const char* is, unsigned char* binOut)
             int n = sscanf(pos, "%02hhx", &(binOut[i]));
             if (1 != n)
             {
-                fprintf(stderr, "No matching characters in input stream: %s.\nReturned: %i\n",
-                        is, n);
+                fprintf(stderr,
+                        "No matching characters in input stream: %s.\n"
+                            "Returned: %i\n",
+                        is,
+                        n);
                 return 0;
             }
 
