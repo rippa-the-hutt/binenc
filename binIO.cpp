@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <sstream>
 #include <iostream>
 
 #include <cstring>
@@ -17,10 +16,11 @@ size_t BinIO::readHexBinary(const char* is, std::vector<uint8_t>& binOut)
 
     for (size_t i = 0; i < argString.length(); i += 2)
     {
-        std::istringstream strstream {argString.substr(i, 2)};
+        size_t digitNumberOfChars = 2;
+        std::string argHexDigit {argString.substr(i, 2)};
         int curByte;
         try {
-            strstream >> std::hex >> curByte;
+            curByte = stoi(argHexDigit, &digitNumberOfChars, 16);
         } catch (...) {
             std::cerr << "Invalid HEX characters in input stream: " << argString
                 << ".\n";
