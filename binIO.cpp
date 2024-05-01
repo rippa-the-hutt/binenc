@@ -99,9 +99,9 @@ size_t BinIO::hexBinaryToString(std::string&         outStr,
 
 int BinIO::printHexBinary(const std::vector<uint8_t>& binIn)
 {
-    for (auto i = 0u; i < binIn.size(); ++i)
-        printf("%02X", binIn[i]);
-    printf("\n");
+    std::string stringInput;
+    BinIO::hexBinaryToString(stringInput, binIn);
+    std::cout << stringInput << std::endl;
 
     return 0;
 }

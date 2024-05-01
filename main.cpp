@@ -16,11 +16,8 @@
 
 int main(int argc, char* argv[])
 {
-    unsigned char buf[4096];
-    //unsigned char iv[16];
     std::vector<uint8_t> iv;
     unsigned char* iv_ptr = NULL;
-    //unsigned char key[32];
     std::vector<uint8_t> key;
     RippaSSL::Algo     algo;
     RippaSSL::BcmMode  bcm;
@@ -69,45 +66,22 @@ int main(int argc, char* argv[])
         }
     }
 
-    //size_t keyLen = BIO_readHexBinary(argv[2], &key[0]);
-    //if ((16 != keyLen) && (32 != keyLen))
-    //{
-    //    printf("Wrong key length: %lu!\n", keyLen);
-    //    exit(1);
-    //}
 
+    BinIO::readHexBinary(key, argv[2]);
+    if ((16 != key.size()) && (32 != key.size()))
     {
-        std::string argString {argv[2]};
-        for (size_t i = 0; i < argString.length(); i += 2)
-        {
-            std::istringstream strstream {argString.substr(i, 2)};
-            int curByte;
-            strstream >> std::hex >> curByte;
-            key.push_back(curByte);
-        }
-        if ((16 != key.size()) && (32 != key.size()))
-        {
-            printf("Wrong key length: %lu!\n", key.size());
-            exit(1);
-        }
+        printf("Wrong key length: %lu!\n", key.size());
+        return 1;
     }
 
     if (argc == 5)
     {
-        std::string argString {argv[3]};
+        BinIO::readHexBinary(iv, argv[3]);
 
-        for (size_t i = 0; i < argString.length(); i += 2)
-        {
-            std::istringstream strstream {argString.substr(i, 2)};
-            int curByte;
-            strstream >> std::hex >> curByte;
-            iv.push_back(curByte);
-        }
-        //if (16 != BIO_readHexBinary(argv[3], &iv[0]))
         if (RippaSSL::blockSizes.at(algo) != iv.size())
         {
             printf("Wrong iv length!\n");
-            exit(1);
+            return 1;
         }
 
         iv_ptr = &iv[0];
@@ -117,7 +91,7 @@ int main(int argc, char* argv[])
              (algo == RippaSSL::Algo::algo_AES256CBC))
     {
         printf("CBC modes require an IV for correct operation!\n");
-        exit(1);
+        return 1;
     }
     else
     {
@@ -125,16 +99,15 @@ int main(int argc, char* argv[])
     }
 
     // reads the input message and places it into buf:
-    int msgLen = BIO_readHexBinary(argv[msgIdx], buf);
-
     std::vector<uint8_t> msgVector;
-    msgVector.insert(msgVector.begin(), buf, buf + msgLen);
+    int msgLen = BinIO::readHexBinary(msgVector, argv[msgIdx]);
 
-    for (size_t i = 0; i < msgVector.size(); ++i)
-    {
-        std::cout << static_cast<int>(msgVector[i]) << " ";
-    }
-    std::cout << std::endl;
+    // optionally prints the input message:
+    //for (size_t i = 0; i < msgVector.size(); ++i)
+    //{
+    //    std::cout << static_cast<int>(msgVector[i]) << " ";
+    //}
+    //std::cout << std::endl;
 
     // creates the relevant object:
     try {
@@ -165,7 +138,7 @@ int main(int argc, char* argv[])
 
     // prints the result:
     printf("Result: ");
-    BIO_printHexBinary(&msgVector[0], msgVector.size());
+    BinIO::printHexBinary(msgVector);
 
     return 0;
 }
