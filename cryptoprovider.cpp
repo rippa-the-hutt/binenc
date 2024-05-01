@@ -91,7 +91,7 @@ RippaSSL::Cipher::Cipher(Algo                       algo,
 }
 
 int RippaSSL::Cipher::update(      std::vector<uint8_t>& output,
-                             const std::vector<uint8_t>  input)
+                             const std::vector<uint8_t>& input)
 {
     int outLen = 0;
     if (!FunctionPointers.cryptoUpdate(context, &output[0], &outLen,
@@ -106,7 +106,7 @@ int RippaSSL::Cipher::update(      std::vector<uint8_t>& output,
 }
 
 int RippaSSL::Cipher::finalize(      std::vector<uint8_t>& output,
-                               const std::vector<uint8_t>  input)
+                               const std::vector<uint8_t>& input)
 {
     int finalizeLen = 0;
 
@@ -211,7 +211,7 @@ RippaSSL::Cmac::Cmac(Algo                       algo,
 }
 
 int RippaSSL::Cmac::update(      std::vector<uint8_t>& output,
-                           const std::vector<uint8_t>  input)
+                           const std::vector<uint8_t>& input)
 {
 }
 

@@ -67,9 +67,9 @@ namespace RippaSSL {
             virtual ~SymCryptoBase() = 0;
 
             virtual int update(      std::vector<uint8_t>& output,
-                               const std::vector<uint8_t>  input) = 0;
+                               const std::vector<uint8_t>& input) = 0;
             virtual int finalize(      std::vector<uint8_t>& output,
-                                 const std::vector<uint8_t>  input) = 0;
+                                 const std::vector<uint8_t>& input) = 0;
 
         protected:
             CTX* context;
@@ -88,9 +88,9 @@ namespace RippaSSL {
                    bool                          padding = false);
 
             int update(      std::vector<uint8_t>& output,
-                       const std::vector<uint8_t>  input);
+                       const std::vector<uint8_t>& input);
             int finalize(      std::vector<uint8_t>& output,
-                         const std::vector<uint8_t>  input);
+                         const std::vector<uint8_t>& input);
 
             ~Cipher();
 
@@ -107,7 +107,7 @@ namespace RippaSSL {
                  bool                       padding = false);
 
             int update(      std::vector<uint8_t>& output,
-                       const std::vector<uint8_t>  input);
+                       const std::vector<uint8_t>& input);
 
             ~Cmac();
 
