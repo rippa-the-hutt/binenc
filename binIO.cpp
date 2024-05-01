@@ -1,51 +1,75 @@
 
 #include "binIO.h"
 
-#include <string.h>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <iostream>
+
+#include <cstring>
 #include <cstdio>
 #include <cstdint>
 
-size_t BIO_readHexBinary(const char* is, unsigned char* binOut)
+size_t BinIO::readHexBinary(const char* is, std::vector<uint8_t>& binOut)
 {
-    size_t outLen = strlen(is);
-    if (outLen % 2u)
+    // builds a string outta the input char array from stdin:
+    std::string argString {is};
+
+    for (size_t i = 0; i < argString.length(); i += 2)
     {
-        printf("Wrong binOut length: %lu!\n", outLen);
-        return 0;
-    }
+        std::istringstream strstream {argString.substr(i, 2)};
+        int curByte;
+        try {
+            strstream >> std::hex >> curByte;
+        } catch (...) {
+            std::cerr << "Invalid HEX characters in input stream: " << argString
+                << ".\n";
 
-    // retrieves the actual binOut length:
-    outLen /= 2u;
-
-    // reads the binOut from inputargument. The caller is responsible to
-    // allocate enough ram:
-    if (binOut != NULL)
-    {
-        const char* pos = is;
-        for (size_t i = 0u; i < outLen; i++)
-        {
-            int n = sscanf(pos, "%02hhx", &(binOut[i]));
-            if (1 != n)
-            {
-                fprintf(stderr,
-                        "No matching characters in input stream: %s.\n"
-                            "Returned: %i\n",
-                        is,
-                        n);
-                return 0;
-            }
-
-            pos += 2;
+            return 0;
         }
+        binOut.push_back(curByte);
     }
+//
+//
+//    size_t outLen = strlen(is);
+//    if (outLen % 2u)
+//    {
+//        printf("Wrong binOut length: %lu!\n", outLen);
+//        return 0;
+//    }
+//
+//    // retrieves the actual binOut length:
+//    outLen /= 2u;
+//
+//    // reads the binOut from inputargument. The caller is responsible to
+//    // allocate enough ram:
+//    if (binOut != NULL)
+//    {
+//        const char* pos = is;
+//        for (size_t i = 0u; i < outLen; i++)
+//        {
+//            int n = sscanf(pos, "%02hhx", &(binOut[i]));
+//            if (1 != n)
+//            {
+//                fprintf(stderr,
+//                        "No matching characters in input stream: %s.\n"
+//                            "Returned: %i\n",
+//                        is,
+//                        n);
+//                return 0;
+//            }
+//
+//            pos += 2;
+//        }
+//    }
 
-    return outLen;
+    return binOut.size();
 }
 
-int BIO_printHexBinary(const unsigned char* buf, size_t bufLen)
+int BinIO::printHexBinary(const std::vector<uint8_t>& binIn)
 {
-    for (size_t i = 0u; i < bufLen; i++)
-        printf("%02X", buf[i]);
+    for (auto i = 0u; i < binIn.size(); ++i)
+        printf("%02X", binIn[i]);
     printf("\n");
 
     return 0;

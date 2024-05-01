@@ -1,21 +1,36 @@
 
 
 #include "binIO.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include <string>
+#include <vector>
+#include <iostream>
+
+#include <cstdio>
+#include <cstdlib>
+
+void myAssert(bool condition, std::string errMessage) {
+    if (!condition)
+    {
+        std::cerr << errMessage << std::endl;
+    }
+}
 
 int main(int argc, char* argv[])
 {
     char* failString = "00010203gg05060708";
     char* goodString = "000102030405060708";
-    unsigned char out[64] = {0u};
+    std::vector<uint8_t> vecArg;
 
     char* teststring = failString;
-    BIO_readHexBinary(teststring, out);
+    int outLen = BinIO::readHexBinary(teststring, vecArg);
+    myAssert(outLen == 0, "The BinIO::readHexBinary function failed to report"
+                          " that the input string is not a valid HEX array!");
 
     teststring = goodString;
-    int outLen = BIO_readHexBinary(teststring, out);
-    BIO_printHexBinary(out, outLen);
+    outLen = BinIO::readHexBinary(teststring, vecArg);
+    myAssert(outLen != 0, "The BinIO::readHexBinary function failed to parse"
+                           " a valid HEX array!");
+    //BinIO::printHexBinary(out, outLen);
 
     return 0;
 }
