@@ -69,6 +69,7 @@ RippaSSL::Cmac::Cmac(Algo                       algo,
 int RippaSSL::Cmac::update(      std::vector<uint8_t>& output,
                            const std::vector<uint8_t>& input)
 {
+    return 0;
 }
 
 RippaSSL::Cmac::~Cmac()
