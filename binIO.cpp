@@ -9,7 +9,7 @@
 #include <cstdio>
 #include <cstdint>
 
-size_t BinIO::readHexBinary(const char* is, std::vector<uint8_t>& binOut)
+size_t BinIO::readHexBinary(std::vector<uint8_t>& binOut, const char* is)
 {
     // builds a string outta the input char array from stdin:
     std::string argString {is};
@@ -21,7 +21,9 @@ size_t BinIO::readHexBinary(const char* is, std::vector<uint8_t>& binOut)
     {
         std::cerr << "BinIO::readHexBinary: Invalid Hex string in input - "
                      "please check that input is correctly populated and the "
-                     "number of characters is even!\n" << argString << std::endl;
+                     "number of characters is even!\n"
+                  << argString
+                  << std::endl;
 
         return 0;
     }
@@ -35,8 +37,9 @@ size_t BinIO::readHexBinary(const char* is, std::vector<uint8_t>& binOut)
             curByte = stoi(argHexDigit, &digitNumberOfChars, 16);
         } catch (...) {
             std::cerr << "BinIO::readHexBinary: invalid HEX characters in input"
-                         "stream!\n" << argString
-                << ".\n";
+                         "stream!\n"
+                      << argString
+                      << ".\n";
 
             return 0;
         }
@@ -44,6 +47,10 @@ size_t BinIO::readHexBinary(const char* is, std::vector<uint8_t>& binOut)
     }
 
     return binOut.size();
+}
+
+size_t BinIO::hexBinaryToString()
+{
 }
 
 int BinIO::printHexBinary(const std::vector<uint8_t>& binIn)

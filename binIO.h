@@ -12,7 +12,9 @@ namespace BinIO
     representation in binOut.
     Returns the length (in bytes) of the output binary buffer.
     */
-    size_t readHexBinary(const char* is, std::vector<uint8_t>& binOut);
+    size_t readHexBinary(std::vector<uint8_t>& binOut, const char* is);
+
+    size_t hexBinaryToString();
 
     /*!
     Prints a binary array in its HEX representation.

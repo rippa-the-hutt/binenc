@@ -24,22 +24,22 @@ int main(int argc, char* argv[])
     std::vector<uint8_t> vecArg;
 
     char* teststring = const_cast<char*>(failString01);
-    int outLen = BinIO::readHexBinary(teststring, vecArg);
+    int outLen = BinIO::readHexBinary(vecArg, teststring);
     myAssert(outLen == 0, "The BinIO::readHexBinary function failed to report"
                           " that the input string is not a valid HEX array!");
 
     teststring = const_cast<char*>(failString02);
-    outLen = BinIO::readHexBinary(teststring, vecArg);
+    outLen = BinIO::readHexBinary(vecArg, teststring);
     myAssert(outLen == 0, "The BinIO::readHexBinary function failed to report"
                           " that the input string is empty!");
 
     teststring = const_cast<char*>(failString03);
-    outLen = BinIO::readHexBinary(teststring, vecArg);
+    outLen = BinIO::readHexBinary(vecArg, teststring);
     myAssert(outLen == 0, "The BinIO::readHexBinary function failed to report"
                           " that the input string's length is odd!");
 
     teststring = const_cast<char*>(goodString);
-    outLen = BinIO::readHexBinary(teststring, vecArg);
+    outLen = BinIO::readHexBinary(vecArg, teststring);
     myAssert(outLen != 0, "The BinIO::readHexBinary function failed to parse"
                            " a valid HEX array!");
     //BinIO::printHexBinary(out, outLen);
