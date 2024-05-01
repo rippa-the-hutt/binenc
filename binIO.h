@@ -9,8 +9,8 @@
 namespace BinIO
 {
     /*!
-    Reads a hex-encoded stream of data from the NULL-terminated char buffer "is" and places its binary
-    representation in binOut.
+    Reads a hex-encoded stream of data from the NULL-terminated char buffer
+    "is" and places its binary representation in binOut.
     Returns the length (in bytes) of the output binary buffer.
     */
     size_t readHexBinary(std::vector<uint8_t>& binOut, const char* is);
@@ -23,6 +23,9 @@ namespace BinIO
     Returns 0 if successful.
     */
     int printHexBinary(const std::vector<uint8_t>& binIn);
+
+    // exception types:
+    struct InputError_IllegalConversion {};
 }
 
 #endif

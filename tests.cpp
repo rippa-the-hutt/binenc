@@ -22,6 +22,7 @@ int main(int argc, char* argv[])
     const char* failString03 = "0001020304050";
     const char* goodString   = "000102030405060708";
     std::vector<uint8_t> vecArg;
+    std::string stringArg;
 
     char* teststring = const_cast<char*>(failString01);
     int outLen = BinIO::readHexBinary(vecArg, teststring);
@@ -42,7 +43,18 @@ int main(int argc, char* argv[])
     outLen = BinIO::readHexBinary(vecArg, teststring);
     myAssert(outLen != 0, "The BinIO::readHexBinary function failed to parse"
                            " a valid HEX array!");
-    //BinIO::printHexBinary(out, outLen);
+
+    try {
+        outLen = BinIO::hexBinaryToString(stringArg, vecArg);
+    } catch (BinIO::InputError_IllegalConversion& ic) {
+        std::cerr << "The BinIO::hexBinaryToString threw exception:\n"
+                  << "    std::to_chars() failed to convert data!"
+                  << std::endl;
+    }
+    myAssert(std::string {goodString} == stringArg,
+             "The BinIO::hexBinaryToString function failed to reconstruct the"
+             " correct vector:\nReturned:\n" + stringArg +
+             "\nExpected:\n" + teststring);
 
     return 0;
 }

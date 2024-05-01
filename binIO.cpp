@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <charconv>
 
 #include <cstring>
 #include <cstdio>
@@ -52,11 +53,41 @@ size_t BinIO::readHexBinary(std::vector<uint8_t>& binOut, const char* is)
 size_t BinIO::hexBinaryToString(std::string&         outStr,
                                 std::vector<uint8_t> inHex)
 {
+    // initializes the output to the empty string, in case the caller didn't:
+    outStr = "";
+
     if (!inHex.size())
-    {
-        outStr = "";
         return 0;
+
+    for (size_t i = 0; i < inHex.size(); ++i)
+    {
+        int offset = 0;
+        std::string tmp {"00"};
+
+        // if the number is smaller than 16, we need to add a leading 0 to keep
+        // a byte representation:
+        // TODO: we might make this a parameter and choose whether to also offer
+        //       word alignment!
+        if (inHex[i] < 0x10u)
+        {
+            tmp.push_back('0');
+            ++offset;
+        }
+
+        auto rc = std::to_chars(tmp.data() + offset,
+                                tmp.data() + tmp.length(),
+                                inHex[i],
+                                16);
+
+        if (std::errc::value_too_large == rc.ec)
+        {
+            throw InputError_IllegalConversion {};
+        }
+
+        outStr += tmp;
     }
+
+    return outStr.length();
 }
 
 int BinIO::printHexBinary(const std::vector<uint8_t>& binIn)
