@@ -1,6 +1,7 @@
 #include "binIO.h"
-#include "cryptoprovider.h"
 #include "RippaSSL/error.h"
+#include "RippaSSL/Base.h"
+#include "RippaSSL/Cipher.h"
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
@@ -100,7 +101,7 @@ int main(int argc, char* argv[])
 
     // reads the input message and places it into buf:
     std::vector<uint8_t> msgVector;
-    int msgLen = BinIO::readHexBinary(msgVector, argv[msgIdx]);
+    BinIO::readHexBinary(msgVector, argv[msgIdx]);
 
     // optionally prints the input message:
     //for (size_t i = 0; i < msgVector.size(); ++i)
