@@ -1,6 +1,8 @@
 
 
 #include "binIO.h"
+#include "Assert.h"
+
 #include <string>
 #include <vector>
 #include <iostream>
@@ -8,30 +10,36 @@
 #include <cstdio>
 #include <cstdlib>
 
-template <typename F>
-void Assert(bool condition, std::string errMessage, F&& lambda) {
-    lambda(condition, errMessage);
-}
 
 int main(int argc, char* argv[])
 {
+    // test vectors:
     const char* failString01 = "00010203gg05060708";
     const char* failString02 = "";
     const char* failString03 = "0001020304050";
     const char* goodString   = "000102030405060708090A0B0C0D0F101112131415";
+
+    // variables:
     std::vector<uint8_t> vecArg;
     std::string stringArg;
+
+    // test profiling:
     int failedTestsCounter = 0;
     int numberOfTests       = 0;
+
+    // this is the lambda that is passed to the Assert() function, and
+    // determines what is the behavior of the Assert itself in case of failure:
     auto errorHandler =
-        [&failedTestsCounter](bool condition, std::string errMsg) {
-            if (!condition)
-            {
-                std::cerr << errMsg << std::endl;
-                ++failedTestsCounter;
-            }
+        [&failedTestsCounter](std::string errMsg) {
+            std::cerr << errMsg << std::endl;
+            ++failedTestsCounter;
         };
 
+    // ACTUAL TESTS
+
+    // BinIO module ///////////////////////////////////////////////////////////
+
+    // NEGATIVE TESTS
     char* teststring = const_cast<char*>(failString01);
     int outLen = BinIO::readHexBinary(vecArg, teststring);
     ++numberOfTests;
@@ -56,6 +64,7 @@ int main(int argc, char* argv[])
            " that the input string's length is odd!",
            errorHandler);
 
+    // POSITIVE TESTS:
     teststring = const_cast<char*>(goodString);
     outLen = BinIO::readHexBinary(vecArg, teststring);
     ++numberOfTests;
@@ -78,6 +87,7 @@ int main(int argc, char* argv[])
            "\nExpected:\n" + teststring,
            errorHandler);
 
+    // FINAL REPORT ///////////////////////////////////////////////////////////
     std::cout << "\nNumber of failed tests/total tests:\n"
               << failedTestsCounter << "/" << numberOfTests
               << std::endl;
