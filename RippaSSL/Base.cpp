@@ -5,7 +5,6 @@
 #include <openssl/params.h>
 
 #include <cstdint>
-#include <cstdio>
 
 const std::map<RippaSSL::Algo, size_t> RippaSSL::blockSizes
 {
