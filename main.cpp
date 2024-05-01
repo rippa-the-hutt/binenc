@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
             return 1;
         }
 
-        iv_ptr = &iv[0];
+        iv_ptr = iv.data();
         msgIdx = 4;
     }
     else if ((algo == RippaSSL::Algo::algo_AES128CBC) ||
