@@ -29,7 +29,7 @@ $(T): $(T).o
 	$(CC) -o $(T) $(T_OBJECTS) $(LDLIBS)
 
 $(T).o: $(T_SOURCES)
-	$(CC) $(CFLAGS) -c $(T_SOURCES)
+	$(CC) $(DFLAGS) -c $(T_SOURCES)
 
 $(S): $(OBJECTS)
 	$(CC) $(CFLAGS) $(LDLIBS) -fverbose-asm -S $(SOURCES)

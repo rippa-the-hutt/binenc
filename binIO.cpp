@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <charconv>
+#include <algorithm>
 
 #include <cstring>
 #include <cstdio>
@@ -34,6 +35,7 @@ size_t BinIO::readHexBinary(std::vector<uint8_t>& binOut, const char* is)
         size_t digitNumberOfChars = 2;
         std::string argHexDigit {argString.substr(i, 2)};
         int curByte;
+
         try {
             curByte = stoi(argHexDigit, &digitNumberOfChars, 16);
         } catch (...) {
@@ -42,8 +44,10 @@ size_t BinIO::readHexBinary(std::vector<uint8_t>& binOut, const char* is)
                       << argString
                       << ".\n";
 
+            binOut.clear();
             return 0;
         }
+
         binOut.push_back(curByte);
     }
 
@@ -70,7 +74,6 @@ size_t BinIO::hexBinaryToString(std::string&         outStr,
         //       word alignment!
         if (inHex[i] < 0x10u)
         {
-            tmp.push_back('0');
             ++offset;
         }
 
@@ -86,6 +89,10 @@ size_t BinIO::hexBinaryToString(std::string&         outStr,
 
         outStr += tmp;
     }
+
+    std::transform(outStr.begin(), outStr.end(),
+                   outStr.begin(),
+                   [](char c){return std::toupper(c);});
 
     return outStr.length();
 }
