@@ -15,11 +15,11 @@ const std::map<RippaSSL::Algo, std::string> cmacAlgoMap {
     {RippaSSL::Algo::algo_AES256CBC, "aes-256-cbc"}
 };
 
-RippaSSL::Cmac::Cmac(Algo                       algo,
-                     MacMode                    mode,
-                     const std::vector<uint8_t> key,
-                     const uint8_t*             iv,
-                     bool                       padding)
+RippaSSL::Cmac::Cmac(Algo                        algo,
+                     MacMode                     mode,
+                     const std::vector<uint8_t>& key,
+                     const uint8_t*              iv,
+                     bool                        padding)
 : SymCryptoBase(algo, padding)
 {
     std::string fetchedMac;
@@ -49,11 +49,10 @@ RippaSSL::Cmac::Cmac(Algo                       algo,
                           };
 
     if ((NULL == handle)                                           ||
-        (NULL == &key[0])                                          ||
         (NULL == (context = EVP_MAC_CTX_new(
                                 const_cast<CmacHandle*>(handle)))) ||
         !EVP_MAC_init(context,
-                      (const unsigned char *) &key[0], key.size(),
+                      (const unsigned char *) key.data(), key.size(),
                       params)
        )
     {
@@ -69,6 +68,11 @@ RippaSSL::Cmac::Cmac(Algo                       algo,
 int RippaSSL::Cmac::update(      std::vector<uint8_t>& output,
                            const std::vector<uint8_t>& input)
 {
+    if (!EVP_MAC_update(context, input.data(), input.size()))
+        throw OpenSSLError_CryptoUpdate {};
+
+    alreadyUpdatedData += input.size();
+
     return 0;
 }
 

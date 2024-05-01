@@ -67,7 +67,7 @@ RippaSSL::Cipher::Cipher(Algo                       algo,
         }
     }
 
-    if (!FunctionPointers.cryptoInit(context, handle, &key[0], &iv[0]))
+    if (!FunctionPointers.cryptoInit(context, handle, key.data(), iv))
     {
         throw OpenSSLError_CryptoInit {};
     }
@@ -80,8 +80,8 @@ int RippaSSL::Cipher::update(      std::vector<uint8_t>& output,
                              const std::vector<uint8_t>& input)
 {
     int outLen = 0;
-    if (!FunctionPointers.cryptoUpdate(context, &output[0], &outLen,
-                                                &input[0],  input.size()))
+    if (!FunctionPointers.cryptoUpdate(context, output.data(), &outLen,
+                                                input.data(),  input.size()))
     {
         throw OpenSSLError_CryptoUpdate {};
     }
@@ -121,7 +121,7 @@ int RippaSSL::Cipher::finalize(      std::vector<uint8_t>& output,
         }
     }
 
-    if (!FunctionPointers.cryptoFinal(context, &output[0], &finalizeLen))
+    if (!FunctionPointers.cryptoFinal(context, output.data(), &finalizeLen))
     {
         throw OpenSSLError_CryptoFinalize {};
     }
