@@ -49,8 +49,14 @@ size_t BinIO::readHexBinary(std::vector<uint8_t>& binOut, const char* is)
     return binOut.size();
 }
 
-size_t BinIO::hexBinaryToString()
+size_t BinIO::hexBinaryToString(std::string&         outStr,
+                                std::vector<uint8_t> inHex)
 {
+    if (!inHex.size())
+    {
+        outStr = "";
+        return 0;
+    }
 }
 
 int BinIO::printHexBinary(const std::vector<uint8_t>& binIn)

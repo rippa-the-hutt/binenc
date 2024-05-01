@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <cstdint>
 #include <vector>
+#include <string>
 
 namespace BinIO
 {
@@ -14,7 +15,8 @@ namespace BinIO
     */
     size_t readHexBinary(std::vector<uint8_t>& binOut, const char* is);
 
-    size_t hexBinaryToString();
+    size_t hexBinaryToString(std::string&         outStr,
+                             std::vector<uint8_t> inHex);
 
     /*!
     Prints a binary array in its HEX representation.
