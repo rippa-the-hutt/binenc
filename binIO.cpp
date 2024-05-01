@@ -34,46 +34,14 @@ size_t BinIO::readHexBinary(const char* is, std::vector<uint8_t>& binOut)
         try {
             curByte = stoi(argHexDigit, &digitNumberOfChars, 16);
         } catch (...) {
-            std::cerr << "Invalid HEX characters in input stream: " << argString
+            std::cerr << "BinIO::readHexBinary: invalid HEX characters in input"
+                         "stream!\n" << argString
                 << ".\n";
 
             return 0;
         }
         binOut.push_back(curByte);
     }
-//
-//
-//    size_t outLen = strlen(is);
-//    if (outLen % 2u)
-//    {
-//        printf("Wrong binOut length: %lu!\n", outLen);
-//        return 0;
-//    }
-//
-//    // retrieves the actual binOut length:
-//    outLen /= 2u;
-//
-//    // reads the binOut from inputargument. The caller is responsible to
-//    // allocate enough ram:
-//    if (binOut != NULL)
-//    {
-//        const char* pos = is;
-//        for (size_t i = 0u; i < outLen; i++)
-//        {
-//            int n = sscanf(pos, "%02hhx", &(binOut[i]));
-//            if (1 != n)
-//            {
-//                fprintf(stderr,
-//                        "No matching characters in input stream: %s.\n"
-//                            "Returned: %i\n",
-//                        is,
-//                        n);
-//                return 0;
-//            }
-//
-//            pos += 2;
-//        }
-//    }
 
     return binOut.size();
 }
