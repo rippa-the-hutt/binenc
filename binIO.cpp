@@ -14,6 +14,18 @@ size_t BinIO::readHexBinary(const char* is, std::vector<uint8_t>& binOut)
     // builds a string outta the input char array from stdin:
     std::string argString {is};
 
+    // consistency checks on the input: the string shall be non-empty and
+    // made up of an even number of characters:
+    size_t inputLen = argString.length();
+    if (!inputLen || (inputLen % 2))
+    {
+        std::cerr << "BinIO::readHexBinary: Invalid Hex string in input - "
+                     "please check that input is correctly populated and the "
+                     "number of characters is even!\n" << argString << std::endl;
+
+        return 0;
+    }
+
     for (size_t i = 0; i < argString.length(); i += 2)
     {
         size_t digitNumberOfChars = 2;
