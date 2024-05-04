@@ -35,7 +35,7 @@ RippaSSL::Cmac::Cmac(Algo                        algo,
             break;
     }
 
-    handle = EVP_MAC_fetch(NULL, fetchedMac.c_str(), NULL);
+    this->handle = EVP_MAC_fetch(NULL, fetchedMac.c_str(), NULL);
 
     // prepares the parameters to be passed to the OpenSSL init function:
     OSSL_PARAM params[] = {
@@ -48,10 +48,10 @@ RippaSSL::Cmac::Cmac(Algo                        algo,
                             OSSL_PARAM_construct_end()
                           };
 
-    if ((NULL == handle)                                           ||
-        (NULL == (context = EVP_MAC_CTX_new(
-                                const_cast<CmacHandle*>(handle)))) ||
-        !EVP_MAC_init(context,
+    if ((NULL == this->handle)                                               ||
+        (NULL == (this->context =
+                    EVP_MAC_CTX_new(const_cast<CmacHandle*>(this->handle)))) ||
+        !EVP_MAC_init(this->context,
                       (const unsigned char *) key.data(), key.size(),
                       params)
        )
@@ -61,23 +61,23 @@ RippaSSL::Cmac::Cmac(Algo                        algo,
 
     if (nullptr != iv)
     {
-        EVP_MAC_update(context, iv, blockSizes.at(algo));
+        EVP_MAC_update(this->context, iv, blockSizes.at(algo));
     }
 }
 
 int RippaSSL::Cmac::update(      std::vector<uint8_t>& output,
                            const std::vector<uint8_t>& input)
 {
-    if (!EVP_MAC_update(context, input.data(), input.size()))
+    if (!EVP_MAC_update(this->context, input.data(), input.size()))
         throw OpenSSLError_CryptoUpdate {};
 
-    alreadyUpdatedData += input.size();
+    this->alreadyUpdatedData += input.size();
 
     return 0;
 }
 
 RippaSSL::Cmac::~Cmac()
 {
-    EVP_MAC_CTX_free(context);
-    EVP_MAC_free(const_cast<CmacHandle*>(handle));
+    EVP_MAC_CTX_free(this->context);
+    EVP_MAC_free(const_cast<CmacHandle*>(this->handle));
 }

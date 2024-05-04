@@ -23,7 +23,7 @@ RippaSSL::Cipher::Cipher(Algo                       algo,
                          bool                       padding)
 : SymCryptoBase(algo, padding)
 {
-    if (NULL == (context = EVP_CIPHER_CTX_new()))
+    if (NULL == (this->context = EVP_CIPHER_CTX_new()))
     {
         throw InputError_NULLPTR {};
     }
@@ -48,45 +48,46 @@ RippaSSL::Cipher::Cipher(Algo                       algo,
     {
         if (algo == RippaSSL::Algo::algo_AES128CBC)
         {
-            handle = EVP_aes_128_cbc();
+            this->handle = EVP_aes_128_cbc();
         }
         else
         {
-            handle = EVP_aes_256_cbc();
+            this->handle = EVP_aes_256_cbc();
         }
     }
     else
     {
         if (algo == RippaSSL::Algo::algo_AES128ECB)
         {
-            handle = EVP_aes_128_ecb();
+            this->handle = EVP_aes_128_ecb();
         }
         else
         {
-            handle = EVP_aes_256_ecb();
+            this->handle = EVP_aes_256_ecb();
         }
     }
 
-    if (!FunctionPointers.cryptoInit(context, handle, key.data(), iv))
+    if (!FunctionPointers.cryptoInit(this->context, this->handle,
+                                     key.data(), iv))
     {
         throw OpenSSLError_CryptoInit {};
     }
 
     // sets the padding, as per constructor:
-    EVP_CIPHER_CTX_set_padding(context, requirePadding);
+    EVP_CIPHER_CTX_set_padding(this->context, this->requirePadding);
 }
 
 int RippaSSL::Cipher::update(      std::vector<uint8_t>& output,
                              const std::vector<uint8_t>& input)
 {
     int outLen = 0;
-    if (!FunctionPointers.cryptoUpdate(context, output.data(), &outLen,
+    if (!FunctionPointers.cryptoUpdate(this->context, output.data(), &outLen,
                                                 input.data(),  input.size()))
     {
         throw OpenSSLError_CryptoUpdate {};
     }
 
-    alreadyUpdatedData += input.size();
+    this->alreadyUpdatedData += input.size();
 
     return outLen;
 }
@@ -101,11 +102,12 @@ int RippaSSL::Cipher::finalize(      std::vector<uint8_t>& output,
         try {
             // checks whether the output vector needs more reserved space for
             // the update function to work properly:
-            unsigned int requiredMemory = alreadyUpdatedData + input.size();
+            unsigned int requiredMemory =
+                this->alreadyUpdatedData + input.size();
             requiredMemory +=
-                (requirePadding) ?
-                    blockSizes.at(currentAlgorithm) -
-                       (input.size() % blockSizes.at(currentAlgorithm)) :
+                (this->requirePadding) ?
+                    blockSizes.at(this->currentAlgorithm) -
+                       (input.size() % blockSizes.at(this->currentAlgorithm)) :
                     0;
 
             if (output.capacity() < requiredMemory)
@@ -121,7 +123,8 @@ int RippaSSL::Cipher::finalize(      std::vector<uint8_t>& output,
         }
     }
 
-    if (!FunctionPointers.cryptoFinal(context, output.data(), &finalizeLen))
+    if (!FunctionPointers.cryptoFinal(this->context,
+                                      output.data(), &finalizeLen))
     {
         throw OpenSSLError_CryptoFinalize {};
     }
@@ -137,5 +140,5 @@ of pointers is available to client application.
 */
 RippaSSL::Cipher::~Cipher()
 {
-    EVP_CIPHER_CTX_free(context);
+    EVP_CIPHER_CTX_free(this->context);
 }
