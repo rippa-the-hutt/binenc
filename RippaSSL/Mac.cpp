@@ -83,3 +83,20 @@ RippaSSL::Cmac::~Cmac()
     if (nullptr != this->handle)
         EVP_MAC_free(const_cast<CmacHandle*>(this->handle));
 }
+
+RippaSSL::Cmac& RippaSSL::Cmac::operator= (Cmac&& prev)
+{
+    // takes the relevant data from the source object:
+    this->context            = prev.context;
+    this->handle             = prev.handle;
+    this->currentAlgorithm   = prev.currentAlgorithm;
+    this->alreadyUpdatedData = prev.alreadyUpdatedData;
+    this->requirePadding     = prev.requirePadding;
+
+    // clears the pointers used by source to handle its resources:
+    prev.context = nullptr;
+    prev.handle  = nullptr;
+
+    // returns this object:
+    return *this;
+}

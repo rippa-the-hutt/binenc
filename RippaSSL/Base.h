@@ -70,7 +70,18 @@ namespace RippaSSL {
             //      constatation that the operator= is non-virtual, so the
             //      derived class' members wouldn't be handled in case of
             //      interface access!
-            SymCryptoBase(SymCryptoBase&&)             = default;
+            SymCryptoBase(SymCryptoBase&& prev) :
+                context{prev.context},
+                handle{prev.handle},
+                currentAlgorithm{prev.currentAlgorithm},
+                alreadyUpdatedData{prev.alreadyUpdatedData},
+                requirePadding{prev.requirePadding}
+            {
+                // invalidates the previous instance's pointers:
+                prev.context = nullptr;
+                prev.handle  = nullptr;
+            }
+
             SymCryptoBase& operator= (SymCryptoBase&&) = delete;
     };
 }

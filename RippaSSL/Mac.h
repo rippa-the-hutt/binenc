@@ -32,6 +32,10 @@ namespace RippaSSL {
             Cmac(const Cmac&)             = delete;
             Cmac& operator= (const Cmac&) = delete;
 
+            // sports move semantics:
+            Cmac(Cmac&& prev) : SymCryptoBase {std::move(prev)} {}
+            Cmac& operator= (Cmac&&);
+
         private:
     };
 }
