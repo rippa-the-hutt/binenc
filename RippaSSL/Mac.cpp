@@ -68,10 +68,40 @@ RippaSSL::Cmac::Cmac(Algo                        algo,
 int RippaSSL::Cmac::update(      std::vector<uint8_t>& output,
                            const std::vector<uint8_t>& input)
 {
+    // prepares output buffer. This is sufficient as the update function does
+    // not apply padding:
+    if ( output.size() < input.size())
+    {
+        output.resize(input.size());
+    }
+
     if (!EVP_MAC_update(this->context, input.data(), input.size()))
         throw OpenSSLError_CryptoUpdate {};
 
     this->alreadyUpdatedData += input.size();
+
+    return 0;
+}
+
+int RippaSSL::Cmac::finalize(      std::vector<uint8_t>& output,
+                             const std::vector<uint8_t>& input)
+{
+    size_t finalizeLen = 0;
+
+    if (input.size())
+    {
+        try {
+            this->update(output, input);
+        } catch (OpenSSLError_CryptoUpdate& cu) {
+            throw OpenSSLError_CryptoFinalize {};
+        }
+    }
+
+    if (!EVP_MAC_final(this->context,
+                       output.data(), &finalizeLen, input.size()))
+    {
+        throw OpenSSLError_CryptoFinalize {};
+    }
 
     return 0;
 }

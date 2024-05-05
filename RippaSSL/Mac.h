@@ -25,6 +25,8 @@ namespace RippaSSL {
 
             int update(      std::vector<uint8_t>& output,
                        const std::vector<uint8_t>& input);
+            int finalize(      std::vector<uint8_t>& output,
+                         const std::vector<uint8_t>& input);
 
             ~Cmac();
 
