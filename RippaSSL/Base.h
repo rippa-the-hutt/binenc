@@ -51,18 +51,27 @@ namespace RippaSSL {
             virtual int finalize(      std::vector<uint8_t>& output,
                                  const std::vector<uint8_t>& input) = 0;
 
-            // disables copy semantics - this class contains pointer resources,
-            // and copying them might be VERY dangerous, as the bookkeeping is
-            // made by OpenSSL:
-            SymCryptoBase(const SymCryptoBase&)             = delete;
-            SymCryptoBase& operator= (const SymCryptoBase&) = delete;
-
         protected:
             CTX* context;
             const HND* handle;
             Algo currentAlgorithm;
             int alreadyUpdatedData;
             bool requirePadding;
+
+            // disables copy semantics - this class contains pointer resources,
+            // and copying them might be VERY dangerous, as the bookkeeping is
+            // made by OpenSSL:
+            SymCryptoBase(const SymCryptoBase&)             = delete;
+            SymCryptoBase& operator= (const SymCryptoBase&) = delete;
+
+            //TODO: allows move semantics for constructor, but deletes the
+            //      move assignment as per sect. 4.4.1 of C++ Move Semantics by
+            //      N. Josuttis. The rationale for this comes from the
+            //      constatation that the operator= is non-virtual, so the
+            //      derived class' members wouldn't be handled in case of
+            //      interface access!
+            SymCryptoBase(SymCryptoBase&&)             = default;
+            SymCryptoBase& operator= (SymCryptoBase&&) = delete;
     };
 }
 
