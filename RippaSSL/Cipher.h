@@ -1,5 +1,5 @@
 #ifndef RIPPASSL_CIPHER_H
-#define RIPPASSL_CIPHER_H
+
 
 #include "Base.h"
 
@@ -30,11 +30,11 @@ namespace RippaSSL {
 
     class Cipher : public SymCryptoBase<CipherCtx, CipherHandle> {
         public:
-            Cipher(Algo                          algo,
-                   BcmMode                       mode,
-                   const std::vector<uint8_t>    key,
-                   const uint8_t*                iv,
-                   bool                          padding = false);
+            explicit Cipher(Algo                          algo,
+                            BcmMode                       mode,
+                            const std::vector<uint8_t>    key,
+                            const uint8_t*                iv,
+                            bool                          padding = false);
 
             int update(      std::vector<uint8_t>& output,
                        const std::vector<uint8_t>& input);
@@ -42,6 +42,10 @@ namespace RippaSSL {
                          const std::vector<uint8_t>& input);
 
             ~Cipher();
+
+            // explicitly forbids copy semantics:
+            Cipher(const Cipher&)             = delete;
+            Cipher& operator= (const Cipher&) = delete;
 
         private:
             CipherFunctionPointers FunctionPointers;

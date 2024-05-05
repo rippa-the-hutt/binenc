@@ -17,16 +17,20 @@ namespace RippaSSL {
 
     class Cmac : public SymCryptoBase<CmacCtx, CmacHandle> {
         public:
-            Cmac(Algo                        algo,
-                 MacMode                     mode,
-                 const std::vector<uint8_t>& key,
-                 const uint8_t*              iv,
-                 bool                        padding = false);
+            explicit Cmac(Algo                        algo,
+                          MacMode                     mode,
+                          const std::vector<uint8_t>& key,
+                          const uint8_t*              iv,
+                          bool                        padding = false);
 
             int update(      std::vector<uint8_t>& output,
                        const std::vector<uint8_t>& input);
 
             ~Cmac();
+
+            // explicitly disables copy semantics:
+            Cmac(const Cmac&)             = delete;
+            Cmac& operator= (const Cmac&) = delete;
 
         private:
     };
