@@ -78,6 +78,8 @@ int RippaSSL::Cmac::update(      std::vector<uint8_t>& output,
 
 RippaSSL::Cmac::~Cmac()
 {
-    EVP_MAC_CTX_free(this->context);
-    EVP_MAC_free(const_cast<CmacHandle*>(this->handle));
+    if (nullptr != this->context)
+        EVP_MAC_CTX_free(this->context);
+    if (nullptr != this->handle)
+        EVP_MAC_free(const_cast<CmacHandle*>(this->handle));
 }
