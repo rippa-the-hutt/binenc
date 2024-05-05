@@ -51,6 +51,9 @@ namespace RippaSSL {
             virtual int finalize(      std::vector<uint8_t>& output,
                                  const std::vector<uint8_t>& input) = 0;
 
+            SymCryptoBase(SymCryptoBase&& constructFrom) = delete;
+            SymCryptoBase& operator= (const SymCryptoBase& copyFrom) = delete;
+
         protected:
             CTX* context;
             const HND* handle;
