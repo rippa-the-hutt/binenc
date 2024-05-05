@@ -51,6 +51,9 @@ namespace RippaSSL {
             virtual int finalize(      std::vector<uint8_t>& output,
                                  const std::vector<uint8_t>& input) = 0;
 
+            // disables copy semantics - this class contains pointer resources,
+            // and copying them might be VERY dangerous, as the bookkeeping is
+            // made by OpenSSL:
             SymCryptoBase(const SymCryptoBase&) = delete;
             SymCryptoBase& operator= (const SymCryptoBase&) = delete;
 
