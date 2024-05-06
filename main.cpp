@@ -42,22 +42,22 @@ int main(int argc, char* argv[])
         if (!strcmp(myMode, "AES128CBC"))
         {
             bcm  = RippaSSL::BcmMode::Bcm_CBC_Encrypt;
-            algo = RippaSSL::Algo::algo_AES128CBC;
+            algo = RippaSSL::Algo::AES128CBC;
         }
         else if(!strcmp(myMode, "AES256CBC"))
         {
             bcm  = RippaSSL::BcmMode::Bcm_CBC_Encrypt;
-            algo = RippaSSL::Algo::algo_AES256CBC;
+            algo = RippaSSL::Algo::AES256CBC;
         }
         else if (!strcmp(myMode, "AES128ECB"))
         {
             bcm  = RippaSSL::BcmMode::Bcm_ECB_Encrypt;
-            algo = RippaSSL::Algo::algo_AES128ECB;
+            algo = RippaSSL::Algo::AES128ECB;
         }
         else if (!strcmp(myMode, "AES256ECB"))
         {
             bcm  = RippaSSL::BcmMode::Bcm_ECB_Encrypt;
-            algo = RippaSSL::Algo::algo_AES256ECB;
+            algo = RippaSSL::Algo::AES256ECB;
         }
         else
         {
@@ -88,8 +88,8 @@ int main(int argc, char* argv[])
         iv_ptr = iv.data();
         msgIdx = 4;
     }
-    else if ((algo == RippaSSL::Algo::algo_AES128CBC) ||
-             (algo == RippaSSL::Algo::algo_AES256CBC))
+    else if ((algo == RippaSSL::Algo::AES128CBC) ||
+             (algo == RippaSSL::Algo::AES256CBC))
     {
         printf("CBC modes require an IV for correct operation!\n");
         return 1;

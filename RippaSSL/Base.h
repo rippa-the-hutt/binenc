@@ -25,10 +25,10 @@ namespace RippaSSL {
 
     enum class Algo
     {
-        algo_AES128CBC,
-        algo_AES128ECB,
-        algo_AES256CBC,
-        algo_AES256ECB
+        AES128CBC,
+        AES128ECB,
+        AES256CBC,
+        AES256ECB
     };
 
     extern const std::map<RippaSSL::Algo, size_t> blockSizes;

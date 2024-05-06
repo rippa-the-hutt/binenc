@@ -162,7 +162,7 @@ std::pair<int, int> RippaSSL_MAC_tests(std::pair<int, int> test_results)
 
     RippaSSL::Cmac myCmac {RippaSSL::Algo::AES128CBC,
                            RippaSSL::MacMode::CMAC,
-                           key, iv};
+                           key, iv.data()};
 
     return std::pair<int, int> {failedTestsCounter, numberOfTests};
 }

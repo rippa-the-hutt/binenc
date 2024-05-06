@@ -11,8 +11,8 @@
 #include <map>
 
 const std::map<RippaSSL::Algo, std::string> cmacAlgoMap {
-    {RippaSSL::Algo::algo_AES128CBC, "aes-128-cbc"},
-    {RippaSSL::Algo::algo_AES256CBC, "aes-256-cbc"}
+    {RippaSSL::Algo::AES128CBC, "aes-128-cbc"},
+    {RippaSSL::Algo::AES256CBC, "aes-256-cbc"}
 };
 
 RippaSSL::Cmac::Cmac(Algo                        algo,

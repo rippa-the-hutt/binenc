@@ -46,7 +46,7 @@ RippaSSL::Cipher::Cipher(Algo                       algo,
     if (mode == RippaSSL::BcmMode::Bcm_CBC_Encrypt ||
         mode == RippaSSL::BcmMode::Bcm_CBC_Decrypt)
     {
-        if (algo == RippaSSL::Algo::algo_AES128CBC)
+        if (algo == RippaSSL::Algo::AES128CBC)
         {
             this->handle = EVP_aes_128_cbc();
         }
@@ -57,7 +57,7 @@ RippaSSL::Cipher::Cipher(Algo                       algo,
     }
     else
     {
-        if (algo == RippaSSL::Algo::algo_AES128ECB)
+        if (algo == RippaSSL::Algo::AES128ECB)
         {
             this->handle = EVP_aes_128_ecb();
         }
