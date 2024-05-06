@@ -13,6 +13,7 @@
 #include <cstring>
 
 std::pair<int, int> BinIO_tests(std::pair<int, int> test_results);
+std::pair<int, int> RippaSSL_MAC_tests(std::pair<int, int> test_results);
 
 int main(int argc, char* argv[])
 {
@@ -25,6 +26,8 @@ int main(int argc, char* argv[])
     // BinIO module ///////////////////////////////////////////////////////////
 
     test_results = BinIO_tests(test_results);
+
+    // RippaSSL/Mac module ////////////////////////////////////////////////////
 
     // FINAL REPORT ///////////////////////////////////////////////////////////
     std::cout << "\nNumber of failed tests/total tests:\n"
@@ -144,6 +147,15 @@ std::pair<int, int> BinIO_tests(std::pair<int, int> test_results)
         binIoWriteStringTests(test.testString.data(),
                               test.errorMessage);
     }
+
+    return std::pair<int, int> {failedTestsCounter, numberOfTests};
+}
+
+std::pair<int, int> RippaSSL_MAC_tests(std::pair<int, int> test_results)
+{
+    // test profiling:
+    int failedTestsCounter = test_results.first;
+    int numberOfTests      = test_results.second;
 
     return std::pair<int, int> {failedTestsCounter, numberOfTests};
 }
