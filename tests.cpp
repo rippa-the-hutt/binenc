@@ -6,31 +6,52 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <utility>
 
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
+std::pair<int, int> BinIO_tests(std::pair<int, int> test_results);
 
 int main(int argc, char* argv[])
 {
+    int failedTestsCounter = 0;
+    int numberOfTests      = 0;
+    std::pair<int, int> test_results {failedTestsCounter, numberOfTests};
+
+    // ACTUAL TESTS
+
+    // BinIO module ///////////////////////////////////////////////////////////
+
+    test_results = BinIO_tests(test_results);
+
+    // FINAL REPORT ///////////////////////////////////////////////////////////
+    std::cout << "\nNumber of failed tests/total tests:\n"
+              << test_results.first << "/" << test_results.second
+              << std::endl;
+    return 0;
+}
+
+std::pair<int, int> BinIO_tests(std::pair<int, int> test_results)
+{
     // test vectors:
-    struct TestVector {
+    struct BinIO_TestVector {
         const std::string testString;
         int               expectedLen;
         const std::string errorMessage;
 
-        TestVector(const std::string& _testString,
-                   int                _expectedLen,
-                   const std::string& _errorMessage)
+        BinIO_TestVector(const std::string& _testString,
+                         int                _expectedLen,
+                         const std::string& _errorMessage)
         : testString {std::move(_testString)}, expectedLen {_expectedLen},
           errorMessage {std::move(_errorMessage)}
         {
         }
     };
 
-    std::vector<TestVector> negativeTests;
-    std::vector<TestVector> positiveTests;
+    std::vector<BinIO_TestVector> negativeTests;
+    std::vector<BinIO_TestVector> positiveTests;
 
     negativeTests.push_back({"00010203gg05060708", 0,
          "The BinIO::readHexBinary function failed to report"
@@ -60,8 +81,8 @@ int main(int argc, char* argv[])
     std::string stringArg;
 
     // test profiling:
-    int failedTestsCounter = 0;
-    int numberOfTests      = 0;
+    int failedTestsCounter = test_results.first;
+    int numberOfTests      = test_results.second;
 
     // this is the lambda that is passed to the Assert() function, and
     // determines what is the behavior of the Assert itself in case of failure:
@@ -70,10 +91,6 @@ int main(int argc, char* argv[])
             std::cerr << errMsg << std::endl;
             ++failedTestsCounter;
         };
-
-    // ACTUAL TESTS
-
-    // BinIO module ///////////////////////////////////////////////////////////
 
     auto binIoReadHexTests =
         [&failedTestsCounter, &numberOfTests, &errorHandler]
@@ -128,9 +145,5 @@ int main(int argc, char* argv[])
                               test.errorMessage);
     }
 
-    // FINAL REPORT ///////////////////////////////////////////////////////////
-    std::cout << "\nNumber of failed tests/total tests:\n"
-              << failedTestsCounter << "/" << numberOfTests
-              << std::endl;
-    return 0;
+    return std::pair<int, int> {failedTestsCounter, numberOfTests};
 }
