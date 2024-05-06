@@ -79,10 +79,6 @@ std::pair<int, int> BinIO_tests(std::pair<int, int> test_results)
          "The BinIO::hexBinaryToString function failed to reconstruct the"
          " correct vector:"});
 
-    // variables:
-    std::vector<uint8_t> vecArg;
-    std::string stringArg;
-
     // test profiling:
     int failedTestsCounter = test_results.first;
     int numberOfTests      = test_results.second;
