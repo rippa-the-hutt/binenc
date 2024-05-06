@@ -1,6 +1,9 @@
 
 
 #include "binIO.h"
+#include "RippaSSL/Mac.h"
+#include "RippaSSL/Base.h"
+#include "RippaSSL/error.h"
 #include "Assert.h"
 
 #include <string>
@@ -152,6 +155,14 @@ std::pair<int, int> RippaSSL_MAC_tests(std::pair<int, int> test_results)
     // test profiling:
     int failedTestsCounter = test_results.first;
     int numberOfTests      = test_results.second;
+    std::vector<uint8_t> iv  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    std::vector<uint8_t> key {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+                              0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F};
+
+    RippaSSL::Cmac myCmac {RippaSSL::Algo::AES128CBC,
+                           RippaSSL::MacMode::CMAC,
+                           key, iv};
 
     return std::pair<int, int> {failedTestsCounter, numberOfTests};
 }

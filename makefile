@@ -10,7 +10,7 @@ OBJECTS=main.o $(EXT_OBJECTS)
 T_SOURCES=tests.cpp $(EXT_SOURCES)
 T_OBJECTS=tests.o $(EXT_OBJECTS)
 DFLAGS= -Wall -ggdb -O0 -std=c++17 -D_GLIBCXX_DEBUG
-CFLAGS= -Wall -Os -std=c++17
+CFLAGS= -Wall       -Os -std=c++17
 LDLIBS= -lssl -lcrypto
 CC=g++
 

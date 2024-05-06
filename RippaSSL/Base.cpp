@@ -8,8 +8,8 @@
 
 const std::map<RippaSSL::Algo, size_t> RippaSSL::blockSizes
 {
-    {RippaSSL::Algo::algo_AES128CBC, 16},
-    {RippaSSL::Algo::algo_AES128ECB, 16},
-    {RippaSSL::Algo::algo_AES256CBC, 16},
-    {RippaSSL::Algo::algo_AES256ECB, 16}
+    {RippaSSL::Algo::AES128CBC, 16},
+    {RippaSSL::Algo::AES128ECB, 16},
+    {RippaSSL::Algo::AES256CBC, 16},
+    {RippaSSL::Algo::AES256ECB, 16}
 };
